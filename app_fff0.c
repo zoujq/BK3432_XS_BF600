@@ -108,6 +108,7 @@ void app_fff1_send_lvl(uint8_t* buf, uint8_t len)
 
 	// Send the message
 	ke_msg_send(req);
+	UART_PRINTF("app_fff1_send_lvl\n");
 }
 
 
@@ -116,14 +117,14 @@ static int fff0s_fff1_level_ntf_cfg_ind_handler(ke_msg_id_t const msgid,
         ke_task_id_t const dest_id,
         ke_task_id_t const src_id)
 {
-	UART_PRINTF("param->ntf_cfg = %x\r\n",param->ntf_cfg);
+	UART_PRINTF("fff1 param->ntf_cfg = %x\r\n",param->ntf_cfg);
 	if(param->ntf_cfg == PRF_CLI_STOP_NTFIND)
 	{
-		ke_timer_clear(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id);
+		//ke_timer_clear(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id);
 	}
 	else
 	{
-		ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 1);
+		//ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 1);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -134,11 +135,12 @@ static int fff1_level_upd_handler(ke_msg_id_t const msgid,
                                   ke_task_id_t const dest_id,
                                   ke_task_id_t const src_id)
 {
+	UART_PRINTF("fff1_level_upd_handler\n");
 	if(param->status == GAP_ERR_NO_ERROR)
 	{
-		uint8_t buf[128];
-		memset(buf, 0xcc, 128);
-		app_fff1_send_lvl(buf, 128);
+		uint8_t buf[5];
+		memset(buf, 0xcc, 5);
+		app_fff1_send_lvl(buf, 5);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -164,6 +166,7 @@ static int app_fff0_msg_dflt_handler(ke_msg_id_t const msgid,
                                      ke_task_id_t const src_id)
 {
 	UART_PRINTF("%s\r\n", __func__);
+	UART_PRINTF("fff0 app_fff0_msg_dflt_handler ");
 
 	// Drop the message
 	return (KE_MSG_CONSUMED);
@@ -176,7 +179,7 @@ static int fff2_writer_req_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const src_id)
 {
 	// Drop the message
-	UART_PRINTF("FFF2 param->value = 0x ");
+	UART_PRINTF("fff0 FFF2 param->value = 0x ");
 
 	for(uint8_t i = 0; i < param->length; i++)
 	{
@@ -193,11 +196,11 @@ static int fff1_period_ntf_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-	uint8_t buf[128];
-	memset(buf, 0xff, 128);
-	app_fff1_send_lvl(buf, 128);
-	//ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 100);
-
+	uint8_t buf[5];
+	memset(buf, 0xff, 5);
+	app_fff1_send_lvl(buf, 5);
+	ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 100);
+	UART_PRINTF("fff0 fff1_period_ntf_handler ");
 	return (KE_MSG_CONSUMED);
 }
 

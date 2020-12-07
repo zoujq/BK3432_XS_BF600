@@ -80,15 +80,21 @@ typedef void (*appm_add_svc_func_t)(void);
 enum appm_svc_list
 {
     APPM_SVC_FFF0,
+		#if (BLE_FFA0_SERVER)
     APPM_SVC_FFA0,
+		#endif
     APPM_SVC_FF50,
     APPM_SVC_FF60,
     APPM_SVC_FF70,
     APPM_SVC_FF80,
+		#if (BLE_FF90_SERVER)
     APPM_SVC_FF90,
+		#endif
     APPM_SVC_DIS,
     APPM_SVC_BATT,
+        #if (BLE_OADS_SERVER)
     APPM_SVC_OADS,
+        #endif
     APPM_SVC_LIST_STOP ,
 };
 
@@ -106,14 +112,24 @@ static const appm_add_svc_func_t appm_add_svc_func_list[APPM_SVC_LIST_STOP] =
 {
     (appm_add_svc_func_t)app_ff50_add_ff50s,
     (appm_add_svc_func_t)app_ff60_add_ff60s,
-    (appm_add_svc_func_t)app_ff70_add_ff70s,
+    (appm_add_svc_func_t)app_ff70_add_ff70s,    
+		#if (BLE_FF80_SERVER)
     (appm_add_svc_func_t)app_ff80_add_ff80s,
+		#endif
+		#if (BLE_FF90_SERVER)
     (appm_add_svc_func_t)app_ff90_add_ff90s,
+		#endif
+		#if (BLE_FFA0_SERVER)
     (appm_add_svc_func_t)app_ffa0_add_ffa0s,
+		#endif
+		#if (BLE_FFF0_SERVER)
     (appm_add_svc_func_t)app_fff0_add_fff0s,
+		#endif    
     (appm_add_svc_func_t)app_dis_add_dis,
     (appm_add_svc_func_t)app_batt_add_bas,
+        #if (BLE_OADS_SERVER)
     (appm_add_svc_func_t)app_oad_add_oads,
+        #endif    
 };
 
 /*
@@ -174,16 +190,30 @@ void appm_init()
 
     // Battery Module
     app_batt_init();	
-
+        #if (BLE_OADS_SERVER)
     app_oads_init();	
-
-    app_ffa0_init();
-    app_fff0_init();
-    app_ff50_init();
-    app_ff60_init();
-    app_ff70_init();
-    app_ff80_init();
-    app_ff90_init();
+        #endif
+		#if (BLE_FFF0_SERVER)
+     app_fff0_init();
+		#endif
+		#if (BLE_FFA0_SERVER)
+     app_ffa0_init();
+		#endif
+		#if (BLE_FF50_SERVER)
+     app_ff50_init();
+		#endif
+		#if (BLE_FF60_SERVER)
+     app_ff60_init();
+		#endif
+		#if (BLE_FF70_SERVER)
+     app_ff70_init();
+		#endif
+		#if (BLE_FF80_SERVER)
+     app_ff80_init();
+		#endif
+		#if (BLE_FF90_SERVER)
+     app_ff90_init();
+		#endif
    
 }
 

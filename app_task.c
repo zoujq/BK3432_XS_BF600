@@ -617,13 +617,13 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
             // Call the Health Thermometer Module
             msg_pol = appm_get_handler(&app_fff0_table_handler, msgid, param, src_id);
         } break;
-
-		case (TASK_ID_FFA0S):
+				#if (BLE_FFA0_SERVER)	
+				case (TASK_ID_FFA0S):
         {
             // Call the Health Thermometer Module
             msg_pol = appm_get_handler(&app_ffa0_table_handler, msgid, param, src_id);
         } break;
-
+				#endif
         case (TASK_ID_FF50S):
         {
             // Call the Health Thermometer Module
@@ -650,13 +650,13 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
             // Call the Health Thermometer Module
             msg_pol = appm_get_handler(&app_ff80_table_handler, msgid, param, src_id);
         } break;
-
+				#if (BLE_FF90_SERVER)	
         case (TASK_ID_FF90S):
         {
             // Call the Health Thermometer Module
             msg_pol = appm_get_handler(&app_ff90_table_handler, msgid, param, src_id);
         } break;
-
+				#endif
 
         case (TASK_ID_DISS):
         {
@@ -669,13 +669,13 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
             // Call the Battery Module
             msg_pol = appm_get_handler(&app_batt_table_handler, msgid, param, src_id);
         } break;
-
+				#if (BLE_OADS_SERVER)	
         case (TASK_ID_OADS):
         {
             // Call the Health Thermometer Module
             msg_pol = appm_get_handler(&app_oads_table_handler, msgid, param, src_id);
         } break;
-
+				#endif
         default:
         {
         } break;

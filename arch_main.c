@@ -322,8 +322,9 @@ void rw_main(void)
 
 		// Checks for sleep have to be done with interrupt disabled
 		GLOBAL_INT_DISABLE();
-
+		#if(BLE_OADS_SERVER)
 		oad_updating_user_section_pro();
+		#endif
 
 		if(wdt_disable_flag==1)
 		{
