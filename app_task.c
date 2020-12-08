@@ -31,7 +31,6 @@
 #include "app_fff0.h"              // fff0 Module Definition
 #include "fff0s_task.h"
 #include "app_ffa0.h"              // fff0 Module Definition
-#include "ffa0s_task.h"
 
 #include "app_ff50.h"              // fff0 Module Definition
 #include "ff50s_task.h"
