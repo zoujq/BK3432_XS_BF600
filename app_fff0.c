@@ -140,7 +140,7 @@ static int fff1_level_upd_handler(ke_msg_id_t const msgid,
 	{
 		uint8_t buf[5];
 		memset(buf, 0xcc, 5);
-		app_fff1_send_lvl(buf, 5);
+		// app_fff1_send_lvl(buf, 5);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -199,7 +199,7 @@ static int fff1_period_ntf_handler(ke_msg_id_t const msgid,
 	uint8_t buf[5];
 	memset(buf, 0xff, 5);
 	app_fff1_send_lvl(buf, 5);
-	ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 100);
+	// ke_timer_set(FFF0S_FFF1_LEVEL_PERIOD_NTF,dest_id , 100);
 	UART_PRINTF("fff0 fff1_period_ntf_handler ");
 	return (KE_MSG_CONSUMED);
 }

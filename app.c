@@ -41,7 +41,7 @@
 #include "app_ffa0.h"                 // Application security Definition
 #include "app_ff50.h"              // fff0 Module Definition
 #include "app_ff60.h"              // fff0 Module Definition
-#include "app_ff70.h"              // fff0 Module Definition
+#include "app_fee0.h"              // fff0 Module Definition
 #include "app_ff80.h"              // fff0 Module Definition
 #include "app_ff90.h"              // fff0 Module Definition
 
@@ -85,7 +85,7 @@ enum appm_svc_list
 		#endif
     APPM_SVC_FF50,
     APPM_SVC_FF60,
-    APPM_SVC_FF70,
+    APPM_SVC_FEE0,
     APPM_SVC_FF80,
 		#if (BLE_FF90_SERVER)
     APPM_SVC_FF90,
@@ -112,7 +112,7 @@ static const appm_add_svc_func_t appm_add_svc_func_list[APPM_SVC_LIST_STOP] =
 {
     (appm_add_svc_func_t)app_ff50_add_ff50s,
     (appm_add_svc_func_t)app_ff60_add_ff60s,
-    (appm_add_svc_func_t)app_ff70_add_ff70s,    
+    (appm_add_svc_func_t)app_fee0_add_fee0s,    
 		#if (BLE_FF80_SERVER)
     (appm_add_svc_func_t)app_ff80_add_ff80s,
 		#endif
@@ -205,8 +205,8 @@ void appm_init()
 		#if (BLE_FF60_SERVER)
      app_ff60_init();
 		#endif
-		#if (BLE_FF70_SERVER)
-     app_ff70_init();
+		#if (BLE_FEE0_SERVER)
+     app_fee0_init();
 		#endif
 		#if (BLE_FF80_SERVER)
      app_ff80_init();

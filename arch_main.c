@@ -360,11 +360,13 @@ void rw_main(void)
 #if (UART_DRIVER)
 static void uart_rx_handler(uint8_t *buf, uint8_t len)
 {
-	for(uint8_t i=0; i<len; i++)
-	{
-		UART_PRINTF("0x%x ", buf[i]);
-	}
-	uart_printf("\r\n");
+	// for(uint8_t i=0; i<len; i++)
+	// {
+	// 	UART_PRINTF("0x%x ", buf[i]);
+	// }
+	// uart_printf("\r\n");
+	extern  void xs_uart_received_isr(uint8_t *buf, uint8_t len);
+	xs_uart_received_isr(buf, len);
 }
 #endif
 

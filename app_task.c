@@ -39,8 +39,8 @@
 #include "app_ff60.h"              // fff0 Module Definition
 #include "ff60s_task.h"
 
-#include "app_ff70.h"              // fff0 Module Definition
-#include "ff70s_task.h"
+#include "app_fee0.h"              // fff0 Module Definition
+#include "fee0s_task.h"
 
 #include "app_ff80.h"              // fff0 Module Definition
 #include "ff80s_task.h"
@@ -638,10 +638,10 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
         } break;
 
 
-        case (TASK_ID_FF70S):
+        case (TASK_ID_FEE0S):
         {
             // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ff70_table_handler, msgid, param, src_id);
+            msg_pol = appm_get_handler(&app_fee0_table_handler, msgid, param, src_id);
         } break;
 
 
