@@ -141,10 +141,12 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
 
         // Only update configuration if value for stop or notification enable
         if ((att_idx == FEE0S_IDX_FEE1_LVL_NTF_CFG)
-                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) || (ntf_cfg == PRF_CLI_START_NTF)))
+                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) 
+                    ||(ntf_cfg == PRF_CLI_START_NTF)
+                    || (ntf_cfg == PRF_CLI_START_IND)))
         {
             // Conserve information in environment
-            if (ntf_cfg == PRF_CLI_START_NTF)
+            if (ntf_cfg == PRF_CLI_START_NTF || (ntf_cfg == PRF_CLI_START_IND))
             {
                 // Ntf cfg bit set to 1
                 fee0s_env->ntf_cfg[conidx] |= (FEE0_FEE1_LVL_NTF_SUP );
@@ -170,10 +172,12 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
            //....
 		}
 		else if ((att_idx == FEE0S_IDX_FEE3_LVL_NTF_CFG)
-                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) || (ntf_cfg == PRF_CLI_START_NTF)))
+                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) || 
+                    (ntf_cfg == PRF_CLI_START_NTF)
+                    || (ntf_cfg == PRF_CLI_START_IND)))
         {
             // Conserve information in environment
-            if (ntf_cfg == PRF_CLI_START_NTF)
+            if (ntf_cfg == PRF_CLI_START_NTF || (ntf_cfg == PRF_CLI_START_IND))
             {
                 // Ntf cfg bit set to 1
                 fee0s_env->ntf_cfg[conidx] |= (FEE0_FEE3_LVL_NTF_SUP);
@@ -198,21 +202,102 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
 		{
             //....
 		}
-		else if (att_idx == FEE0S_IDX_FEE2_LVL_VAL)
+		else if (att_idx == FEE0S_IDX_FEE1_LVL_VAL)
 		{
+
 			// Allocate the alert value change indication
-			struct fee0s_fee2_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE2_WRITER_REQ_IND,
+			struct fee0s_fee1_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE1_WRITER_REQ_IND,
 			        prf_dst_task_get(&(fee0s_env->prf_env), conidx),
-			        dest_id, fee0s_fee2_writer_ind);
+			        dest_id, fee0s_fee1_writer_ind);
 			
 			// Fill in the parameter structure	
-			memcpy(ind->fee2_value,&param->value[0],param->length);
+			memcpy(ind->fee1_value,&param->value,param->length);
 			ind->conidx = conidx;
 			ind->length = param->length;
 			
 			// Send the message
 			ke_msg_send(ind);
 		}
+        else if (att_idx == FEE0S_IDX_FEE2_LVL_VAL)
+        {
+            
+            // Allocate the alert value change indication
+            struct fee0s_fee2_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE2_WRITER_REQ_IND,
+                    prf_dst_task_get(&(fee0s_env->prf_env), conidx),
+                    dest_id, fee0s_fee2_writer_ind);
+            
+            // Fill in the parameter structure  
+            memcpy(ind->fee2_value,&param->value,param->length);
+            ind->conidx = conidx;
+            ind->length = param->length;
+            
+            // Send the message
+            ke_msg_send(ind);
+        }
+        else if (att_idx == FEE0S_IDX_FEE3_LVL_VAL)
+        {
+            
+            // Allocate the alert value change indication
+            struct fee0s_fee3_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE3_WRITER_REQ_IND,
+                    prf_dst_task_get(&(fee0s_env->prf_env), conidx),
+                    dest_id, fee0s_fee3_writer_ind);
+            
+            // Fill in the parameter structure  
+            memcpy(ind->fee3_value,&param->value,param->length);
+            ind->conidx = conidx;
+            ind->length = param->length;
+            
+            // Send the message
+            ke_msg_send(ind);
+        }
+        else if (att_idx == FEE0S_IDX_FEE4_LVL_VAL)
+        {
+            
+            // Allocate the alert value change indication
+            struct fee0s_fee4_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE4_WRITER_REQ_IND,
+                    prf_dst_task_get(&(fee0s_env->prf_env), conidx),
+                    dest_id, fee0s_fee4_writer_ind);
+            
+            // Fill in the parameter structure  
+            memcpy(ind->fee4_value,&param->value,param->length);
+            ind->conidx = conidx;
+            ind->length = param->length;
+            
+            // Send the message
+            ke_msg_send(ind);
+        }
+        else if (att_idx == FEE0S_IDX_FEE5_LVL_VAL)
+        {
+            
+            // Allocate the alert value change indication
+            struct fee0s_fee5_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE5_WRITER_REQ_IND,
+                    prf_dst_task_get(&(fee0s_env->prf_env), conidx),
+                    dest_id, fee0s_fee5_writer_ind);
+            
+            // Fill in the parameter structure  
+            memcpy(ind->fee5_value,&param->value,param->length);
+            ind->conidx = conidx;
+            ind->length = param->length;
+            
+            // Send the message
+            ke_msg_send(ind);
+        }
+        else if (att_idx == FEE0S_IDX_FEE6_LVL_VAL)
+        {
+            
+            // Allocate the alert value change indication
+            struct fee0s_fee6_writer_ind *ind = KE_MSG_ALLOC(FEE0S_FEE6_WRITER_REQ_IND,
+                    prf_dst_task_get(&(fee0s_env->prf_env), conidx),
+                    dest_id, fee0s_fee6_writer_ind);
+            
+            // Fill in the parameter structure  
+            memcpy(ind->fee6_value,&param->value,param->length);
+            ind->conidx = conidx;
+            ind->length = param->length;
+            
+            // Send the message
+            ke_msg_send(ind);
+        }
         else
         {
             status = PRF_APP_ERROR;
@@ -243,67 +328,66 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     uint16_t length = 0;
     struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
 
+    //Send write response
+    cfm = KE_MSG_ALLOC_DYN(GATTC_READ_CFM, src_id, dest_id, gattc_read_cfm, length);
+    cfm->handle = param->handle;
+    cfm->status = status;
+    cfm->length = length;
+
+
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {
         // read notification information
         if (att_idx == FEE0S_IDX_FEE1_LVL_VAL)
         {
-            length = FEE0_FEE1_DATA_LEN * sizeof(uint8_t);
+            cfm->length = FEE0_FEE1_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee1_value,cfm->length);
         }
         // read notification information
         else if (att_idx == FEE0S_IDX_FEE1_LVL_NTF_CFG)
         {
-            length = sizeof(uint16_t);
+            cfm->length = sizeof(uint16_t);
+            uint16_t ntf_cfg = (fee0s_env->ntf_cfg[conidx] & FEE0_FEE1_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
+            co_write16p(cfm->value, ntf_cfg);
+        }
+        else if(att_idx == FEE0S_IDX_FEE2_LVL_VAL)
+        {
+            cfm->length = FEE0_FEE2_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee2_value,cfm->length);
         }
 		else if(att_idx == FEE0S_IDX_FEE3_LVL_VAL)
 		{
-			length = FEE0_FEE3_DATA_LEN * sizeof(uint8_t);
+			cfm->length = FEE0_FEE3_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee3_value,cfm->length);
 		}
 		else if(att_idx == FEE0S_IDX_FEE3_LVL_NTF_CFG)
 		{
-			length = sizeof(uint16_t);
+			cfm->length = sizeof(uint16_t);
+            uint16_t ntf_cfg = (fee0s_env->ntf_cfg[conidx] & FEE0_FEE3_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
+            co_write16p(cfm->value, ntf_cfg);
 		}
+        else if(att_idx == FEE0S_IDX_FEE4_LVL_VAL)
+        {
+            cfm->length = FEE0_FEE4_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee4_value,cfm->length);
+        }
+        else if(att_idx == FEE0S_IDX_FEE5_LVL_VAL)
+        {
+            cfm->length = FEE0_FEE5_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee5_value,cfm->length);
+        }
+        else if(att_idx == FEE0S_IDX_FEE6_LVL_VAL)
+        {
+            cfm->length = FEE0_FEE6_DATA_LEN;
+            memcpy(cfm->value,fee0s_env->fee6_value,cfm->length);
+        }
         else
         {
             status = PRF_APP_ERROR;
         }
     }
-
-    //Send write response
-    cfm = KE_MSG_ALLOC_DYN(GATTC_READ_CFM, src_id, dest_id, gattc_read_cfm, length);
-    cfm->handle = param->handle;
-    cfm->status = status;
-    cfm->length = length;
-   
-    if (status == GAP_ERR_NO_ERROR)
-    {
-        // read notification information
-        if (att_idx == FEE0S_IDX_FEE1_LVL_VAL)
-        {
-            cfm->value[0] = fee0s_env->fee1_lvl[0];
-        }
-        // retrieve notification config
-        else if (att_idx == FEE0S_IDX_FEE1_LVL_NTF_CFG)
-        {
-            uint16_t ntf_cfg = (fee0s_env->ntf_cfg[conidx] & FEE0_FEE1_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
-            co_write16p(cfm->value, ntf_cfg);
-        }  
-		else if(att_idx == FEE0S_IDX_FEE3_LVL_VAL)
-		{
-			cfm->value[0] = fee0s_env->fee3_lvl[0];
-		}
-		else if(att_idx == FEE0S_IDX_FEE3_LVL_NTF_CFG)
-		{
-			uint16_t ntf_cfg = (fee0s_env->ntf_cfg[conidx] & FEE0_FEE3_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
-            co_write16p(cfm->value, ntf_cfg);
-		}
-        else
-        {
-            /* Not Possible */
-        }
-    }
-
+    
     ke_msg_send(cfm);
 
     return (KE_MSG_CONSUMED);
@@ -313,8 +397,8 @@ extern uint16_t g_hande;
 static int gattc_cmp_evt_handler(ke_msg_id_t const msgid,  struct gattc_cmp_evt const *param,
                                  ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-    if(param->operation == GATTC_NOTIFY)
-    {	
+    if(param->operation == GATTC_NOTIFY || param->operation == GATTC_INDICATE)
+    {   	
       	uint8_t conidx = KE_IDX_GET(src_id);
       	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
 

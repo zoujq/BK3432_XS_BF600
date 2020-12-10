@@ -119,11 +119,11 @@ static int ff80s_ff81_level_ntf_cfg_ind_handler(ke_msg_id_t const msgid,
 	UART_PRINTF("param->ntf_cfg = %x\r\n",param->ntf_cfg);
 	if(param->ntf_cfg == PRF_CLI_STOP_NTFIND)
 	{
-		ke_timer_clear(FF80S_FF81_LEVEL_PERIOD_NTF,dest_id);
+		// ke_timer_clear(FF80S_FF81_LEVEL_PERIOD_NTF,dest_id);
 	}
 	else
 	{
-		ke_timer_set(FF80S_FF81_LEVEL_PERIOD_NTF,dest_id , 1);
+		// ke_timer_set(FF80S_FF81_LEVEL_PERIOD_NTF,dest_id , 1);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -136,9 +136,9 @@ static int ff81_level_upd_handler(ke_msg_id_t const msgid,
 {
 	if(param->status == GAP_ERR_NO_ERROR)
 	{
-		uint8_t buf[128];
-		memset(buf, 0xcc, 128);
-		app_ff81_send_lvl(buf, 128);
+		// uint8_t buf[128];
+		// memset(buf, 0xcc, 128);
+		// app_ff81_send_lvl(buf, 128);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -170,20 +170,21 @@ static int app_ff80_msg_dflt_handler(ke_msg_id_t const msgid,
 }
 
 
-static int ff82_writer_req_handler(ke_msg_id_t const msgid,
-                                   struct ff80s_ff82_writer_ind *param,
+static int ff81_writer_req_handler(ke_msg_id_t const msgid,
+                                   struct ff80s_ff81_writer_ind *param,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
+	extern void ff80_ff81_0x2a9f_cb(uint8_t* buf);
 	// Drop the message
-	UART_PRINTF("FF82 param->value = 0x ");
+	UART_PRINTF("FF81 param->value = 0x ");
 
 	for(uint8_t i = 0; i < param->length; i++)
 	{
-		UART_PRINTF("%02x ",param->ff82_value[i]);
+		UART_PRINTF("%02x ",param->ff81_value[i]);
 	}
 	UART_PRINTF("\r\n");
-
+	ff80_ff81_0x2a9f_cb(param->ff81_value);
 	return (KE_MSG_CONSUMED);
 }
 
@@ -193,9 +194,9 @@ static int ff81_period_ntf_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-	uint8_t buf[128];
-	memset(buf, 0xff, 128);
-	app_ff81_send_lvl(buf, 128);
+	// uint8_t buf[128];
+	// memset(buf, 0xff, 128);
+	// app_ff81_send_lvl(buf, 128);
 	//ke_timer_set(FF80S_FF81_LEVEL_PERIOD_NTF,dest_id , 100);
 
 	return (KE_MSG_CONSUMED);
@@ -215,7 +216,7 @@ const struct ke_msg_handler app_ff80_msg_handler_list[] =
 	{KE_MSG_DEFAULT_HANDLER,        (ke_msg_func_t)app_ff80_msg_dflt_handler},
 	{FF80S_FF81_LEVEL_NTF_CFG_IND,  (ke_msg_func_t)ff80s_ff81_level_ntf_cfg_ind_handler},
 	{FF80S_FF81_LEVEL_UPD_RSP,      (ke_msg_func_t)ff81_level_upd_handler},
-	{FF80S_FF82_WRITER_REQ_IND,		(ke_msg_func_t)ff82_writer_req_handler},
+	{FF80S_FF81_WRITER_REQ_IND,		(ke_msg_func_t)ff81_writer_req_handler},
 	{FF80S_FF81_LEVEL_PERIOD_NTF,	(ke_msg_func_t)ff81_period_ntf_handler},
 };
 

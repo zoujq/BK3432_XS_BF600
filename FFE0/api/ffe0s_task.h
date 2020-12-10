@@ -32,6 +32,10 @@
 
 #define  FFE0_FFE1_DATA_LEN  5
 #define  FFE0_FFE2_DATA_LEN  5
+#define  FFE0_FFE3_DATA_LEN  5
+#define  FFE0_FFE4_DATA_LEN  5
+#define  FFE0_FFE5_DATA_LEN  5
+#define  FFE0_FFE6_DATA_LEN  5
 /*
  * TYPE DEFINITIONS
  ****************************************************************************************

@@ -29,8 +29,8 @@
 #define FF50S_IDX_MAX     0x01
 ///Maximal number of FF50 that can be added in the DB
 
-#define  FF50_FF51_DATA_LEN  5
-#define  FF50_FF52_DATA_LEN  5
+#define  FF50_FF51_DATA_LEN  15
+#define  FF50_FF52_DATA_LEN  4
 /*
  * TYPE DEFINITIONS
  ****************************************************************************************

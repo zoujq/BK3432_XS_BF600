@@ -119,11 +119,11 @@ static int ff60s_ff61_level_ntf_cfg_ind_handler(ke_msg_id_t const msgid,
 	UART_PRINTF("param->ntf_cfg = %x\r\n",param->ntf_cfg);
 	if(param->ntf_cfg == PRF_CLI_STOP_NTFIND)
 	{
-		ke_timer_clear(FF60S_FF61_LEVEL_PERIOD_NTF,dest_id);
+		// ke_timer_clear(FF60S_FF61_LEVEL_PERIOD_NTF,dest_id);
 	}
 	else
 	{
-		ke_timer_set(FF60S_FF61_LEVEL_PERIOD_NTF,dest_id , 1);
+		// ke_timer_set(FF60S_FF61_LEVEL_PERIOD_NTF,dest_id , 1);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -136,9 +136,9 @@ static int ff61_level_upd_handler(ke_msg_id_t const msgid,
 {
 	if(param->status == GAP_ERR_NO_ERROR)
 	{
-		uint8_t buf[128];
-		memset(buf, 0xcc, 128);
-		app_ff61_send_lvl(buf, 128);
+		// uint8_t buf[128];
+		// memset(buf, 0xcc, 128);
+		// app_ff61_send_lvl(buf, 128);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -193,9 +193,9 @@ static int ff61_period_ntf_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-	uint8_t buf[128];
-	memset(buf, 0xff, 128);
-	app_ff61_send_lvl(buf, 128);
+	// uint8_t buf[128];
+	// memset(buf, 0xff, 128);
+	// app_ff61_send_lvl(buf, 128);
 	//ke_timer_set(FF60S_FF61_LEVEL_PERIOD_NTF,dest_id , 100);
 
 	return (KE_MSG_CONSUMED);

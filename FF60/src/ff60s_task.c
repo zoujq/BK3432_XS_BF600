@@ -116,14 +116,16 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
 
         // Only update configuration if value for stop or notification enable
         if ((att_idx == FF60S_IDX_FF61_LVL_NTF_CFG)
-                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) || (ntf_cfg == PRF_CLI_START_NTF)))
+                && ((ntf_cfg == PRF_CLI_STOP_NTFIND) 
+                    || (ntf_cfg == PRF_CLI_START_NTF)
+                    || (ntf_cfg == PRF_CLI_START_IND)))
         {
 
             // Conserve information in environment
-            if (ntf_cfg == PRF_CLI_START_NTF)
+            if ((ntf_cfg == PRF_CLI_START_NTF) || (ntf_cfg == PRF_CLI_START_IND))
             {
                 // Ntf cfg bit set to 1
-                ff60s_env->ntf_cfg[conidx] |= (FF60_FF61_LVL_NTF_SUP );
+                ff60s_env->ntf_cfg[conidx] |= (FF60_FF61_LVL_NTF_SUP);
             }
             else
             {
@@ -192,6 +194,10 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         {
             length = FF60_FF61_DATA_LEN * sizeof(uint8_t);
         }
+        else if (att_idx == FF60S_IDX_FF62_LVL_VAL)
+        {
+            length = FF60_FF62_DATA_LEN * sizeof(uint8_t);
+        }
         // read notification information
         else if (att_idx == FF60S_IDX_FF61_LVL_NTF_CFG)
         {
@@ -214,7 +220,12 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         // read notification information
         if (att_idx == FF60S_IDX_FF61_LVL_VAL)
         {
-            cfm->value[0] = ff60s_env->ff61_lvl[0];
+            memcpy(cfm->value, ff60s_env->ff61_lvl,FF60_FF61_DATA_LEN);
+            // memcpy(cfm->value,"11223",FF60_FF61_DATA_LEN);
+        }
+        else  if (att_idx == FF60S_IDX_FF62_LVL_VAL)
+        {
+            memcpy(cfm->value, ff60s_env->ff62_value,FF60_FF62_DATA_LEN);
         }
         // retrieve notification config
         else if (att_idx == FF60S_IDX_FF61_LVL_NTF_CFG)
@@ -237,7 +248,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
 static int gattc_cmp_evt_handler(ke_msg_id_t const msgid,  struct gattc_cmp_evt const *param,
                                  ke_task_id_t const dest_id, ke_task_id_t const src_id)
 {
-    if(param->operation == GATTC_NOTIFY)
+    if(param->operation == GATTC_NOTIFY || param->operation == GATTC_INDICATE)
     {	
       	uint8_t conidx = KE_IDX_GET(src_id);
       	struct ff60s_env_tag* ff60s_env = PRF_ENV_GET(FF60S, ff60s);

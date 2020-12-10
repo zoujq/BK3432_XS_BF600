@@ -45,9 +45,9 @@ const struct attm_desc ff80_att_db[FF80S_IDX_NB] =
     [FF80S_IDX_FF81_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
 
 
-	[FF80S_IDX_FF82_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
-    //  Characteristic Value
-    [FF80S_IDX_FF82_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF82,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FF80_FF82_DATA_LEN *sizeof(uint8_t)},
+	// [FF80S_IDX_FF82_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+ //    //  Characteristic Value
+ //    [FF80S_IDX_FF82_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF82,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FF80_FF82_DATA_LEN *sizeof(uint8_t)},
 
 	
 
@@ -84,20 +84,6 @@ static uint8_t ff80s_init (struct prf_task_env* env, uint16_t* start_hdl, uint16
             FF80S_IDX_NB, NULL, env->task, &ff80_att_db[0],
             (sec_lvl & (PERM_MASK_SVC_DIS | PERM_MASK_SVC_AUTH | PERM_MASK_SVC_EKS)));
 				
-
-
-    // //Set optional permissions
-    // if (status == GAP_ERR_NO_ERROR)
-    // {
-    //     //Set optional permissions
-    //     if(params->features == FF80_FF81_LVL_NTF_SUP)
-    //     {
-    //         // Battery Level characteristic value permissions
-    //         uint16_t perm = PERM(RD, ENABLE) | PERM(NTF, ENABLE);
-
-    //         attm_att_set_permission(shdl + FF80S_IDX_FF81_LVL_VAL, perm, 0);
-    //     }
-    // }
 
     //-------------------- Update profile task information  ---------------------
     if (status == ATT_ERR_NO_ERROR)

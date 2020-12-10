@@ -56,7 +56,7 @@ enum
 {		
 		ATT_USER_SERVER_FF80 						= ATT_UUID_16(0x1805),
 	  
-		ATT_USER_SERVER_CHAR_FF81       			= ATT_UUID_16(0x2a2c),
+		ATT_USER_SERVER_CHAR_FF81       			= ATT_UUID_16(0x2a2b),
 		
 		ATT_USER_SERVER_CHAR_FF82					= ATT_UUID_16(0xFF82),
 		
@@ -71,8 +71,8 @@ enum
 	FF80S_IDX_FF81_LVL_VAL,
 	FF80S_IDX_FF81_LVL_NTF_CFG,
 
-	FF80S_IDX_FF82_LVL_CHAR,
-	FF80S_IDX_FF82_LVL_VAL,
+	// FF80S_IDX_FF82_LVL_CHAR,
+	// FF80S_IDX_FF82_LVL_VAL,
 
 
 
@@ -96,7 +96,7 @@ struct ff80s_env_tag
     /// FF80 Services Start Handle
     uint16_t start_hdl;
     /// Level of the FF81
-    uint8_t ff81_lvl[FF80_FF81_DATA_LEN];
+    uint8_t ff81_value[FF80_FF81_DATA_LEN];
 	
 	uint8_t ff82_value[FF80_FF82_DATA_LEN];
     /// BASS task state

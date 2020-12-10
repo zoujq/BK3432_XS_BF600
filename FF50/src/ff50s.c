@@ -38,12 +38,12 @@ const struct attm_desc ff50_att_db[FF50S_IDX_NB] =
 
     [FF50S_IDX_FF52_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
-    [FF50S_IDX_FF52_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF52,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FF50_FF52_DATA_LEN *sizeof(uint8_t)},
+    [FF50S_IDX_FF52_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF52,PERM(RD, ENABLE), PERM(RI, ENABLE), FF50_FF52_DATA_LEN *sizeof(uint8_t)},
 
     // ff51 Level Characteristic Declaration
     [FF50S_IDX_FF51_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     // ff51 Level Characteristic Value
-    [FF50S_IDX_FF51_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF51, PERM(WRITE_COMMAND, ENABLE) , PERM(RI, ENABLE), FF50_FF51_DATA_LEN * sizeof(uint8_t)},
+    [FF50S_IDX_FF51_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF51, PERM(IND, ENABLE)|PERM(RD, ENABLE) , PERM(RI, ENABLE), FF50_FF51_DATA_LEN * sizeof(uint8_t)},
 
     // ff51 Level Characteristic - Client Characteristic Configuration Descriptor
     [FF50S_IDX_FF51_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
@@ -82,19 +82,6 @@ static uint8_t ff50s_init (struct prf_task_env* env, uint16_t* start_hdl, uint16
             (sec_lvl & (PERM_MASK_SVC_DIS | PERM_MASK_SVC_AUTH | PERM_MASK_SVC_EKS)));
                 
 
-
-    //Set optional permissions
-    if (status == GAP_ERR_NO_ERROR)
-    {
-        //Set optional permissions
-        if(params->features == FF50_FF51_LVL_NTF_SUP)
-        {
-            // Battery Level characteristic value permissions
-            uint16_t perm = PERM(RD, ENABLE) | PERM(IND, ENABLE);
-
-            attm_att_set_permission(shdl + FF50S_IDX_FF51_LVL_VAL, perm, 0);
-        }
-    }
 
     //-------------------- Update profile task information  ---------------------
     if (status == ATT_ERR_NO_ERROR)
@@ -169,7 +156,8 @@ void ff50s_notify_ff51_lvl(struct ff50s_env_tag* ff50s_env, struct ff50s_ff51_le
             gattc_send_evt_cmd, sizeof(uint8_t)* (param->length));
 
     // Fill in the parameter structure
-    // ff51_lvl->operation = GATTC_NOTIFY;
+    //ff51_lvl->operation = GATTC_NOTIFY;
+    UART_PRINTF("ff50s_notify_ff51_lvl \n");
     ff51_lvl->operation =GATTC_INDICATE;
     ff51_lvl->handle = ff50s_get_att_handle(FF50S_IDX_FF51_LVL_VAL);
     // pack measured value in database
@@ -194,7 +182,8 @@ const struct prf_task_cbs ff50s_itf =
 
 const struct prf_task_cbs* ff50s_prf_itf_get(void)
 {
-   return &ff50s_itf;
+    UART_PRINTF("ff50s_prf_itf_get \n");
+    return &ff50s_itf;
 }
 
 
@@ -204,6 +193,7 @@ uint16_t ff50s_get_att_handle( uint8_t att_idx)
     struct ff50s_env_tag *ff50s_env = PRF_ENV_GET(FF50S, ff50s);
     uint16_t handle = ATT_INVALID_HDL;
    
+    UART_PRINTF("ff50s_get_att_handle \n");
     handle = ff50s_env->start_hdl;
 
     // increment index according to expected index
@@ -231,6 +221,7 @@ uint8_t ff50s_get_att_idx(uint16_t handle, uint8_t *att_idx)
     uint16_t hdl_cursor = ff50s_env->start_hdl;
     uint8_t status = PRF_APP_ERROR;
 
+    UART_PRINTF("ff50s_get_att_idx \n");
     // Browse list of services
     // handle must be greater than current index 
     // check if it's a mandatory index

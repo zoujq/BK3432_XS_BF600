@@ -57,6 +57,20 @@
 #include "gpio.h"
 #include "wdt.h"
 #include "rtc.h"
+
+
+
+#include "rwip_config.h"
+
+#include "gap.h"
+#include "gattc_task.h"
+#include "attm.h"
+#include "atts.h"
+#include "co_utils.h"
+#include "ff50s.h"
+#include "ff50s_task.h"
+#include "uart.h"
+#include "prf_utils.h"
 /*
  * DEFINES
  ****************************************************************************************

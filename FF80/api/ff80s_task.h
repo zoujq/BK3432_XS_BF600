@@ -29,8 +29,8 @@
 #define FF80S_IDX_MAX     0x01
 ///Maximal number of FF80 that can be added in the DB
 
-#define  FF80_FF81_DATA_LEN  5
-#define  FF80_FF82_DATA_LEN  5
+#define  FF80_FF81_DATA_LEN  10
+#define  FF80_FF82_DATA_LEN  1
 /*
  * TYPE DEFINITIONS
  ****************************************************************************************
@@ -60,7 +60,7 @@ enum ff80s_msg_id
     /// Inform APP that FF81 Level Notification Configuration has been changed - use to update bond data
     FF80S_FF81_LEVEL_NTF_CFG_IND,
 	
-	FF80S_FF82_WRITER_REQ_IND,
+	FF80S_FF81_WRITER_REQ_IND,
 
 	FF80S_FF81_LEVEL_PERIOD_NTF
 	
@@ -130,10 +130,10 @@ struct ff80s_ff81_level_ntf_cfg_ind
 
 
 /// Parameters of the @ref FF80S_FF82_WRITER_REQ_IND message
-struct ff80s_ff82_writer_ind
+struct ff80s_ff81_writer_ind
 {
     /// Alert level
-    uint8_t ff82_value[FF80_FF82_DATA_LEN];
+    uint8_t ff81_value[FF80_FF81_DATA_LEN];
 	
 	uint8_t length;
     /// Connection index

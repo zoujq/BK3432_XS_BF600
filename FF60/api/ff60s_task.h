@@ -29,8 +29,8 @@
 #define FF60S_IDX_MAX     0x01
 ///Maximal number of FF60 that can be added in the DB
 
-#define  FF60_FF61_DATA_LEN  5
-#define  FF60_FF62_DATA_LEN  5
+#define  FF60_FF61_DATA_LEN  14
+#define  FF60_FF62_DATA_LEN  4
 /*
  * TYPE DEFINITIONS
  ****************************************************************************************

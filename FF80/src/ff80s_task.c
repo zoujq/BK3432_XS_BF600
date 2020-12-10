@@ -140,15 +140,15 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
 						
             ke_msg_send(ind);			
         }
-		else if (att_idx == FF80S_IDX_FF82_LVL_VAL)
+		else if (att_idx == FF80S_IDX_FF81_LVL_VAL)
 		{
 			// Allocate the alert value change indication
-			struct ff80s_ff82_writer_ind *ind = KE_MSG_ALLOC(FF80S_FF82_WRITER_REQ_IND,
+			struct ff80s_ff81_writer_ind *ind = KE_MSG_ALLOC(FF80S_FF81_WRITER_REQ_IND,
 			        prf_dst_task_get(&(ff80s_env->prf_env), conidx),
-			        dest_id, ff80s_ff82_writer_ind);
+			        dest_id, ff80s_ff81_writer_ind);
 			
 			// Fill in the parameter structure	
-			memcpy(ind->ff82_value,&param->value[0],param->length);
+			memcpy(ind->ff81_value,&param->value[0],param->length);
 			ind->conidx = conidx;
 			ind->length = param->length;
 			
@@ -214,7 +214,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         // read notification information
         if (att_idx == FF80S_IDX_FF81_LVL_VAL)
         {
-            cfm->value[0] = ff80s_env->ff81_lvl[0];
+            memcpy(cfm->value,ff80s_env->ff81_value,FF80_FF81_DATA_LEN) ;
         }
         // retrieve notification config
         else if (att_idx == FF80S_IDX_FF81_LVL_NTF_CFG)

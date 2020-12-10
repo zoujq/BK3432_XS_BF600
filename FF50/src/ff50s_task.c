@@ -124,7 +124,7 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
         {
 
             // Conserve information in environment
-            if (ntf_cfg == PRF_CLI_START_NTF)
+            if (ntf_cfg == PRF_CLI_START_IND)
             {
                 // Ntf cfg bit set to 1
                 ff50s_env->ntf_cfg[conidx] |= (FF50_FF51_LVL_NTF_SUP );
@@ -187,7 +187,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     uint8_t status = ff50s_get_att_idx(param->handle, &att_idx);
     uint16_t length = 0;
     struct ff50s_env_tag* ff50s_env = PRF_ENV_GET(FF50S, ff50s);
-    UART_PRINTF("gattc_read_req_ind_handler\n");
+    UART_PRINTF("ff50 gattc_read_req_ind_handler\n");
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {
@@ -195,6 +195,10 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         if (att_idx == FF50S_IDX_FF51_LVL_VAL)
         {
             length = FF50_FF51_DATA_LEN * sizeof(uint8_t);
+        }
+        else if (att_idx == FF50S_IDX_FF52_LVL_VAL)
+        {
+            length = FF50_FF52_DATA_LEN * sizeof(uint8_t);
         }
         // read notification information
         else if (att_idx == FF50S_IDX_FF51_LVL_NTF_CFG)
@@ -216,11 +220,10 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     if (status == GAP_ERR_NO_ERROR)
     {
         // read notification information
-        if (att_idx == FF50S_IDX_FF51_LVL_VAL)
+        if (att_idx == FF50S_IDX_FF52_LVL_VAL)
         {
             // cfm->value[0] = ff50s_env->ff51_lvl[0];
-            cfm->value[0]='1';
-            cfm->value[1]='6';
+            memcpy(cfm->value,ff50s_env->ff52_value,FF50_FF52_DATA_LEN);
         }
         // retrieve notification config
         else if (att_idx == FF50S_IDX_FF51_LVL_NTF_CFG)

@@ -36,39 +36,42 @@ const struct attm_desc fee0_att_db[FEE0S_IDX_NB] =
     // FEE0 Service Declaration
     [FEE0S_IDX_SVC]            =   {ATT_DECL_PRIMARY_SERVICE, PERM(RD, ENABLE), 0, 0},
 
+     // fee1 Level Characteristic Declaration
+    [FEE0S_IDX_FEE1_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    // fee1 Level Characteristic Value
+    [FEE0S_IDX_FEE1_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE1, PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE)|PERM(NTF, ENABLE), PERM(RI, ENABLE), FEE0_FEE1_DATA_LEN * sizeof(uint8_t)},
+    // fee1 Level Characteristic - Client Characteristic Configuration Descriptor
+    [FEE0S_IDX_FEE1_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
+
+
+    [FEE0S_IDX_FEE2_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    //  Characteristic Value
+    [FEE0S_IDX_FEE2_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE2,PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), PERM(RI, ENABLE), FEE0_FEE2_DATA_LEN *sizeof(uint8_t)},
+
+    // fee1 Level Characteristic Declaration
+    [FEE0S_IDX_FEE3_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    // fee1 Level Characteristic Value
+    [FEE0S_IDX_FEE3_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE3,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE)|PERM(IND, ENABLE), PERM(RI, ENABLE), FEE0_FEE3_DATA_LEN * sizeof(uint8_t)},
+
+    // fee1 Level Characteristic - Client Characteristic Configuration Descriptor
+    [FEE0S_IDX_FEE3_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
+    
+
     [FEE0S_IDX_FEE4_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
-    [FEE0S_IDX_FEE4_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE4,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE2_DATA_LEN *sizeof(uint8_t)},
+    [FEE0S_IDX_FEE4_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE4,PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), PERM(RI, ENABLE), FEE0_FEE2_DATA_LEN *sizeof(uint8_t)},
 
-	[FEE0S_IDX_FEE2_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
-    //  Characteristic Value
-    [FEE0S_IDX_FEE2_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE2,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE2_DATA_LEN *sizeof(uint8_t)},
-
-	// fee1 Level Characteristic Declaration
-	[FEE0S_IDX_FEE1_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
-    // fee1 Level Characteristic Value
-    [FEE0S_IDX_FEE1_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE1, PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE1_DATA_LEN * sizeof(uint8_t)},
-
-	// fee1 Level Characteristic - Client Characteristic Configuration Descriptor
-	[FEE0S_IDX_FEE1_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
-
-	// fee1 Level Characteristic Declaration
-	[FEE0S_IDX_FEE3_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
-    // fee1 Level Characteristic Value
-    [FEE0S_IDX_FEE3_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE3, PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE3_DATA_LEN * sizeof(uint8_t)},
-
-	// fee1 Level Characteristic - Client Characteristic Configuration Descriptor
-	[FEE0S_IDX_FEE3_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
 	
-
     [FEE0S_IDX_FEE5_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
-    [FEE0S_IDX_FEE5_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE5,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE5_DATA_LEN *sizeof(uint8_t)},
+    [FEE0S_IDX_FEE5_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE5,PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), PERM(RI, ENABLE), FEE0_FEE5_DATA_LEN *sizeof(uint8_t)},
 
 
     [FEE0S_IDX_FEE6_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
-    [FEE0S_IDX_FEE6_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE6,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FEE0_FEE6_DATA_LEN *sizeof(uint8_t)},
+    [FEE0S_IDX_FEE6_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FEE6,PERM(RD, ENABLE), PERM(RI, ENABLE), FEE0_FEE6_DATA_LEN *sizeof(uint8_t)},
+
+
 };/// Macro used to retrieve permission value from access and rights on attribute.
 
 
@@ -98,23 +101,6 @@ static uint8_t fee0s_init (struct prf_task_env* env, uint16_t* start_hdl, uint16
             (sec_lvl & (PERM_MASK_SVC_DIS | PERM_MASK_SVC_AUTH | PERM_MASK_SVC_EKS)));
 
 	//Set optional permissions
-    if (status == GAP_ERR_NO_ERROR)
-    {
-        //Set optional permissions
-        if((params->features & 0x01) == FEE0_FEE1_LVL_NTF_SUP)
-        {
-            // Battery Level characteristic value permissions
-            uint16_t perm = PERM(RD, ENABLE) | PERM(NTF, ENABLE);
-
-            attm_att_set_permission(shdl + FEE0S_IDX_FEE1_LVL_VAL, perm, 0);
-        }
-		if((params->features & 0x02) == FEE0_FEE3_LVL_NTF_SUP)
-		{
-			uint16_t perm = PERM(RD, ENABLE) | PERM(NTF, ENABLE);
-
-            attm_att_set_permission(shdl + FEE0S_IDX_FEE3_LVL_VAL, perm, 0);
-		}
-    }
 	
     //-------------------- Update profile task information  ---------------------
     if (status == ATT_ERR_NO_ERROR)
@@ -209,7 +195,7 @@ void fee0s_notify_fee3_lvl(struct fee0s_env_tag* fee0s_env, struct fee0s_fee3_le
             gattc_send_evt_cmd, sizeof(uint8_t)* (param->length));
 
     // Fill in the parameter structure
-    fee3_lvl->operation = GATTC_NOTIFY;
+    fee3_lvl->operation = GATTC_INDICATE;
     fee3_lvl->handle = fee0s_get_att_handle(FEE0S_IDX_FEE3_LVL_VAL);
 	// save current to g_handle
 	g_hande = fee3_lvl->handle;

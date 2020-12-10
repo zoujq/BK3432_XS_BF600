@@ -84,7 +84,7 @@ void app_ff50_add_ff50s(void)
 	req->app_task = TASK_APP;
 	req->start_hdl = 0; //req->start_hdl = 0; dynamically allocated
 
-
+	UART_PRINTF("app_ff50_add_ff50s");
 	// Set parameters
 	db_cfg = (struct ff50s_db_cfg* ) req->param;
 
@@ -102,6 +102,7 @@ void app_ff51_send_lvl(uint8_t* buf, uint8_t len)
 	                                        prf_get_task_from_id(TASK_ID_FF50S),
 	                                        TASK_APP,
 	                                        ff50s_ff51_level_upd_req);
+	UART_PRINTF("app_ff51_send_lvl");
 	// Fill in the parameter structure
 	req->length = len;
 	memcpy(req->ff51_level, buf, len);
@@ -119,11 +120,11 @@ static int ff50s_ff51_level_ntf_cfg_ind_handler(ke_msg_id_t const msgid,
 	UART_PRINTF("param->ntf_cfg = %x\r\n",param->ntf_cfg);
 	if(param->ntf_cfg == PRF_CLI_STOP_NTFIND)
 	{
-		ke_timer_clear(FF50S_FF51_LEVEL_PERIOD_NTF,dest_id);
+		// ke_timer_clear(FF50S_FF51_LEVEL_PERIOD_NTF,dest_id);
 	}
 	else
 	{
-		ke_timer_set(FF50S_FF51_LEVEL_PERIOD_NTF,dest_id , 1);
+		// ke_timer_set(FF50S_FF51_LEVEL_PERIOD_NTF,dest_id , 1);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -134,11 +135,12 @@ static int ff51_level_upd_handler(ke_msg_id_t const msgid,
                                   ke_task_id_t const dest_id,
                                   ke_task_id_t const src_id)
 {
+	UART_PRINTF("ff51_level_upd_handler");
 	if(param->status == GAP_ERR_NO_ERROR)
 	{
-		uint8_t buf[128];
-		memset(buf, 0xcc, 128);
-		app_ff51_send_lvl(buf, 128);
+		// uint8_t buf[128];
+		// memset(buf, 0xcc, 128);
+		// app_ff51_send_lvl(buf, 128);
 	}
 
 	return (KE_MSG_CONSUMED);
@@ -166,6 +168,7 @@ static int app_ff50_msg_dflt_handler(ke_msg_id_t const msgid,
 	UART_PRINTF("%s\r\n", __func__);
 
 	// Drop the message
+	UART_PRINTF("app_ff50_msg_dflt_handler");
 	return (KE_MSG_CONSUMED);
 }
 
@@ -193,11 +196,11 @@ static int ff51_period_ntf_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-	uint8_t buf[128];
-	memset(buf, 0xff, 128);
-	app_ff51_send_lvl(buf, 128);
+	uint8_t buf[5];
+	memset(buf, 0xff, 5);
+	app_ff51_send_lvl(buf, 5);
 	//ke_timer_set(FF50S_FF51_LEVEL_PERIOD_NTF,dest_id , 100);
-
+	UART_PRINTF("ff51_period_ntf_handler");
 	return (KE_MSG_CONSUMED);
 }
 

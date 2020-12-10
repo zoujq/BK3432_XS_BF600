@@ -29,13 +29,13 @@
 #define FEE0S_IDX_MAX     0x01
 ///Maximal number of FFF0 that can be added in the DB
 
-#define  FEE0_FEE1_DATA_LEN  5
-#define  FEE0_FEE2_DATA_LEN  5
-#define  FEE0_FEE3_DATA_LEN  5
+#define  FEE0_FEE1_DATA_LEN  4
+#define  FEE0_FEE2_DATA_LEN  4
+#define  FEE0_FEE3_DATA_LEN  10
 
-#define  FEE0_FEE4_DATA_LEN  5
-#define  FEE0_FEE5_DATA_LEN  5
-#define  FEE0_FEE6_DATA_LEN  5
+#define  FEE0_FEE4_DATA_LEN  1
+#define  FEE0_FEE5_DATA_LEN  1
+#define  FEE0_FEE6_DATA_LEN  1
 
 /*
  * TYPE DEFINITIONS
@@ -73,7 +73,17 @@ enum fee0s_msg_id
 
 	FEE0S_FEE3_LEVEL_NTF_CFG_IND,
 	
-	FEE0S_FEE2_WRITER_REQ_IND,
+	FEE0S_FEE1_WRITER_REQ_IND,
+
+    FEE0S_FEE2_WRITER_REQ_IND,
+
+    FEE0S_FEE3_WRITER_REQ_IND,
+
+    FEE0S_FEE4_WRITER_REQ_IND,
+
+    FEE0S_FEE5_WRITER_REQ_IND,
+    
+    FEE0S_FEE6_WRITER_REQ_IND,
 
 	FEE0S_FEE1_LEVEL_PERIOD_NTF,
 
@@ -173,6 +183,16 @@ struct fee0s_fee3_level_ntf_cfg_ind
 };
 
 /// Parameters of the @ref FFF0S_FFF2_WRITER_REQ_IND message
+struct fee0s_fee1_writer_ind
+{
+    /// Alert level
+    uint8_t fee1_value[FEE0_FEE1_DATA_LEN];
+    
+    uint8_t length;
+    /// Connection index
+    uint8_t conidx;
+};
+
 struct fee0s_fee2_writer_ind
 {
     /// Alert level
@@ -182,7 +202,42 @@ struct fee0s_fee2_writer_ind
     /// Connection index
     uint8_t conidx;
 };
-
+struct fee0s_fee3_writer_ind
+{
+    /// Alert level
+    uint8_t fee3_value[FEE0_FEE3_DATA_LEN];
+    
+    uint8_t length;
+    /// Connection index
+    uint8_t conidx;
+};
+struct fee0s_fee4_writer_ind
+{
+    /// Alert level
+    uint8_t fee4_value[FEE0_FEE4_DATA_LEN];
+    
+    uint8_t length;
+    /// Connection index
+    uint8_t conidx;
+};
+struct fee0s_fee5_writer_ind
+{
+    /// Alert level
+    uint8_t fee5_value[FEE0_FEE5_DATA_LEN];
+    
+    uint8_t length;
+    /// Connection index
+    uint8_t conidx;
+};
+struct fee0s_fee6_writer_ind
+{
+    /// Alert level
+    uint8_t fee6_value[FEE0_FEE6_DATA_LEN];
+    
+    uint8_t length;
+    /// Connection index
+    uint8_t conidx;
+};
 
 /*
  * TASK DESCRIPTOR DECLARATIONS

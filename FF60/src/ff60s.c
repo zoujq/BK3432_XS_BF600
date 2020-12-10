@@ -38,12 +38,12 @@ const struct attm_desc ff60_att_db[FF60S_IDX_NB] =
 
 	[FF60S_IDX_FF62_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
-    [FF60S_IDX_FF62_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF62,PERM(IND, ENABLE), PERM(RI, ENABLE), FF60_FF62_DATA_LEN *sizeof(uint8_t)},
+    [FF60S_IDX_FF62_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF62,PERM(RD, ENABLE), PERM(RI, ENABLE), FF60_FF62_DATA_LEN *sizeof(uint8_t)},
 
 	// ff61 Level Characteristic Declaration
 	[FF60S_IDX_FF61_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     // ff61 Level Characteristic Value
-    [FF60S_IDX_FF61_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF61, PERM(RD, ENABLE) , PERM(RI, ENABLE), FF60_FF61_DATA_LEN * sizeof(uint8_t)},
+    [FF60S_IDX_FF61_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF61, PERM(IND, ENABLE)|PERM(RD, ENABLE) , PERM(RI, ENABLE), FF60_FF61_DATA_LEN * sizeof(uint8_t)},
 
 	// ff61 Level Characteristic - Client Characteristic Configuration Descriptor
 	[FF60S_IDX_FF61_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
@@ -169,12 +169,12 @@ void ff60s_notify_ff61_lvl(struct ff60s_env_tag* ff60s_env, struct ff60s_ff61_le
             gattc_send_evt_cmd, sizeof(uint8_t)* (param->length));
 
     // Fill in the parameter structure
-    ff61_lvl->operation = GATTC_NOTIFY;
+    ff61_lvl->operation = GATTC_INDICATE;
     ff61_lvl->handle = ff60s_get_att_handle(FF60S_IDX_FF61_LVL_VAL);
     // pack measured value in database
     ff61_lvl->length = param->length;
   	//ff61_lvl->value[0] = ff60s_env->ff61_lvl[0];
-		memcpy(&ff61_lvl->value[0],&param->ff61_level[0],param->length);
+	memcpy(&ff61_lvl->value[0],&param->ff61_level[0],param->length);
     // send notification to peer device
     ke_msg_send(ff61_lvl);
 }
