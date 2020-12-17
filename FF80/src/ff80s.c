@@ -45,9 +45,14 @@ const struct attm_desc ff80_att_db[FF80S_IDX_NB] =
     [FF80S_IDX_FF81_LVL_NTF_CFG] = {ATT_DESC_CLIENT_CHAR_CFG,  PERM(RD, ENABLE)|PERM(WRITE_REQ, ENABLE), 0, 0},
 
 
-	// [FF80S_IDX_FF82_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
- //    //  Characteristic Value
- //    [FF80S_IDX_FF82_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF82,PERM(WRITE_COMMAND, ENABLE), PERM(RI, ENABLE), FF80_FF82_DATA_LEN *sizeof(uint8_t)},
+	[FF80S_IDX_FF82_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    //  Characteristic Value
+    [FF80S_IDX_FF82_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF82,PERM(RD, ENABLE), PERM(RI, ENABLE), FF80_FF82_DATA_LEN *sizeof(uint8_t)},
+
+
+    [FF80S_IDX_FF83_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    //  Characteristic Value
+    [FF80S_IDX_FF83_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FF83,PERM(RD, ENABLE), PERM(RI, ENABLE), FF80_FF82_DATA_LEN *sizeof(uint8_t)},
 
 	
 
@@ -224,7 +229,7 @@ uint8_t ff80s_get_att_idx(uint16_t handle, uint8_t *att_idx)
     // check if it's a mandatory index
     if(handle <= (hdl_cursor + FF80S_IDX_FF81_LVL_VAL))
     {
-        *att_idx = handle -hdl_cursor;
+        *att_idx = handle - hdl_cursor;
         status = GAP_ERR_NO_ERROR;
         
     }

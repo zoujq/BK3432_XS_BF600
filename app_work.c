@@ -90,7 +90,124 @@
  void set_ff60_ff62_0x2a9c_rd(uint8_t* buf);
  void set_ff60_ff61_0x2a9b_ind(uint8_t* buf);
  void set_bass_batt_0x2a19_rd(uint8_t batt);
- //uart----------------------------------------------------------------------------------
+ void set_bass_batt_0x2a19_rd(uint8_t batt);
+ //Weight Scale----------------------------------------------------------------------------------
+ 
+ //Weight Scale Feature  0x2a9e
+void set_ff50_ff52_0x2a9e_rd(uint8_t* buf)
+ {
+ 	struct ff50s_env_tag* ff50s_env = PRF_ENV_GET(FF50S, ff50s);
+ 	memcpy(ff50s_env->ff52_value,buf,FF50_FF52_DATA_LEN);
+
+ }
+void set_ff50_ff51_0x2a9d_ind(uint8_t* buf)
+{
+	extern void app_ff51_send_lvl(uint8_t* buf, uint8_t len);
+
+	app_ff51_send_lvl(buf,FF50_FF51_DATA_LEN);
+	UART_PRINTF("set_ff50_ff51_0x2a9d_ind\r\n");
+}
+
+//Body Composition------------------------------------------------------------------------------
+
+ void set_ff60_ff62_0x2a9c_rd(uint8_t* buf)
+ {
+ 	struct ff60s_env_tag* ff60s_env = PRF_ENV_GET(FF60S, ff60s);
+ 	memcpy(ff60s_env->ff62_value,buf,FF60_FF62_DATA_LEN);
+ }
+ void set_ff60_ff61_0x2a9b_ind(uint8_t* buf)
+{
+	extern void app_ff61_send_lvl(uint8_t* buf, uint8_t len);	
+	app_ff61_send_lvl(buf,FF60_FF61_DATA_LEN);	
+	UART_PRINTF("set_ff60_ff61_0x2a9b_ind\r\n");
+}
+//User Data
+void set_fee0_fee1_0x2a99_ntf(uint8_t* buf)
+{
+	extern void app_fee1_send_lvl(uint8_t* buf, uint8_t len);
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+	
+ 	app_fee1_send_lvl(buf,FEE0_FEE1_DATA_LEN);
+ 	memcpy(fee0s_env->fee1_value,buf,FEE0_FEE1_DATA_LEN);
+ 	UART_PRINTF("set_fee0_fee1_0x2a99_ntf\r\n");
+}
+
+void fee0_fee1_0x2a99_cb(uint8_t* buf)
+{
+	UART_PRINTF("fee0_fee1_0x2a99_cb\r\n");
+}
+void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
+{
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+ 	memcpy(fee0s_env->fee2_value,buf,FEE0_FEE2_DATA_LEN);
+}
+void fee0_fee2_0x2a85_cb(uint8_t* buf)
+{
+	UART_PRINTF("fee0_fee2_0x2a99_cb\r\n");
+}
+void set_fee0_fee3_0x2a9f_ntf(uint8_t* buf)
+{
+	extern void app_fee3_send_lvl(uint8_t* buf, uint8_t len);
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+	
+ 	app_fee3_send_lvl(buf,FEE0_FEE3_DATA_LEN);
+ 	memcpy(fee0s_env->fee3_value,buf,FEE0_FEE3_DATA_LEN);
+ 	UART_PRINTF("set_fee0_fee3_0x2a9f_ntf\r\n");
+}
+void fee0_fee3_0x2a9f_cb(uint8_t* buf)
+{
+	UART_PRINTF("fee0_fee3_0x2a9f_cb\r\n");
+}
+void set_fee0_fee4_0x2a8c_rd(uint8_t* buf)
+{
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+ 	memcpy(fee0s_env->fee4_value,buf,FEE0_FEE4_DATA_LEN);
+}
+void fee0_fee4_0x2a8c_cb(uint8_t* buf)
+{
+	UART_PRINTF("fee0_fee4_0x2a8c_cb\r\n");
+}
+
+void set_fee0_fee5_0x2a8e_rd(uint8_t* buf)
+{
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+ 	memcpy(fee0s_env->fee5_value,buf,FEE0_FEE5_DATA_LEN);
+}
+void fee0_fee5_0x2a8e_cb(uint8_t* buf)
+{
+	UART_PRINTF("fee0_fee5_0x2a8e_cb\r\n");
+}
+
+void set_fee0_fee6_0x2a9a_rd(uint8_t* buf)
+{
+	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
+ 	memcpy(fee0s_env->fee6_value,buf,FEE0_FEE6_DATA_LEN);
+}
+
+//Current Time 
+void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf)
+{
+	extern void app_ff81_send_lvl(uint8_t* buf, uint8_t len);
+	struct ff80s_env_tag* ff80s_env = PRF_ENV_GET(FF80S, ff80s);
+	
+ 	app_ff81_send_lvl(buf,FF80_FF81_DATA_LEN);
+ 	memcpy(ff80s_env->ff81_value,buf,FF80_FF81_DATA_LEN);
+}
+void ff80_ff81_0x2a9b_cb(uint8_t* buf)
+{
+	UART_PRINTF("ff80_ff81_0x2a9b_cb\r\n");
+	set_ff80_ff81_0x2a9b_ntf(buf);
+	set_bass_batt_0x2a19_rd(80);
+
+}
+// battery
+void set_bass_batt_0x2a19_rd(uint8_t batt)
+{
+	struct bass_env_tag* bass_env = PRF_ENV_GET(BASS, bass);
+ 	bass_env->batt_lvl[0]=batt;
+}
+
+//uart----------------------------------------------------------------------------------
  /**
   * [xs_uart_send_data description]
   * @Author   zoujq                    904087449@qq.com
@@ -144,119 +261,65 @@
 		set_ff60_ff62_0x2a9c_rd("6565");
 		set_ff60_ff61_0x2a9b_ind("123456789123456");
 	}
-	else if(buf[0]='8')
+	else if(buf[0]=='8')
 	{
 		set_bass_batt_0x2a19_rd(58);
 	}
+	else if(buf[0]=='9')
+	{
+		uint8_t b[19]={0};
+		uint8_t b1[4]={0};
+		uint8_t b2[4]={0};
+		uint8_t b4[1]={0};
+		uint8_t b5[1]={0};
+		b[0]=0x20;
+		b[1]=0x01;
+		b[2]=0x01;
+		b[3]=0x01;
+
+		set_fee0_fee3_0x2a9f_ntf(b);
+
+		// b1[0]=0;
+		// b1[1]=0;
+		// b1[2]=0;
+		// b1[3]=0;
+		// set_fee0_fee1_0x2a99_ntf(b1);
+
+		b2[0]=0xD0;
+		b2[1]=0x07;
+		b2[2]=5;
+		b2[3]=6;
+		set_fee0_fee2_0x2a85_rd(b2);
+		b4[0]=1;
+		set_fee0_fee4_0x2a8c_rd(b4);
+		b5[0]=185;
+		set_fee0_fee5_0x2a8e_rd(b5);
+
+
+
+	}
+	else if(buf[0]=='A')
+	{
+		uint8_t b[19]={0};
+		b[0]=0x20;
+		b[1]=0x02;
+		b[2]=0x01;
+
+
+		set_fee0_fee3_0x2a9f_ntf(b);
+
+
+
+	}
+	else if(buf[0]=='B')
+	{
+		uint8_t b[19]={0};
+		b[0]=0x20;
+		b[1]=0x02;
+		b[2]=0x05;
+		b[3]=0x00;
+
+		set_fee0_fee3_0x2a9f_ntf(b);
+
+	}
  }
-
- //Weight Scale----------------------------------------------------------------------------------
- 
- //Weight Scale Feature  0x2a9e
-void set_ff50_ff52_0x2a9e_rd(uint8_t* buf)
- {
- 	struct ff50s_env_tag* ff50s_env = PRF_ENV_GET(FF50S, ff50s);
- 	memcpy(ff50s_env->ff52_value,buf,FF50_FF52_DATA_LEN);
-
- }
-void set_ff50_ff51_0x2a9d_ind(uint8_t* buf)
-{
-	extern void app_ff51_send_lvl(uint8_t* buf, uint8_t len);
-
-	app_ff51_send_lvl(buf,FF50_FF51_DATA_LEN);
-}
-
-//Body Composition------------------------------------------------------------------------------
-
- void set_ff60_ff62_0x2a9c_rd(uint8_t* buf)
- {
- 	struct ff60s_env_tag* ff60s_env = PRF_ENV_GET(FF60S, ff60s);
- 	memcpy(ff60s_env->ff62_value,buf,FF60_FF62_DATA_LEN);
- }
- void set_ff60_ff61_0x2a9b_ind(uint8_t* buf)
-{
-	extern void app_ff61_send_lvl(uint8_t* buf, uint8_t len);	
-	app_ff61_send_lvl(buf,FF60_FF61_DATA_LEN);	
-}
-//User Data
-void set_fee0_fee1_0x2a99_ntf(uint8_t* buf)
-{
-	extern void app_fee1_send_lvl(uint8_t* buf, uint8_t len);
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
-	
- 	app_fee1_send_lvl(buf,FEE0_FEE1_DATA_LEN);
- 	memcpy(fee0s_env->fee1_value,buf,FEE0_FEE1_DATA_LEN);
-}
-
-void fee0_fee1_0x2a99_cb(uint8_t* buf)
-{
-	UART_PRINTF("fee0_fee1_0x2a99_cb\r\n");
-}
-void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
-{
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
- 	memcpy(fee0s_env->fee2_value,buf,FEE0_FEE2_DATA_LEN);
-}
-void fee0_fee2_0x2a85_cb(uint8_t* buf)
-{
-	UART_PRINTF("fee0_fee2_0x2a99_cb\r\n");
-}
-void set_fee0_fee3_0x2a9f_ntf(uint8_t* buf)
-{
-	extern void app_fee3_send_lvl(uint8_t* buf, uint8_t len);
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
-	
- 	app_fee1_send_lvl(buf,FEE0_FEE3_DATA_LEN);
- 	memcpy(fee0s_env->fee3_value,buf,FEE0_FEE3_DATA_LEN);
-}
-void fee0_fee3_0x2a9f_cb(uint8_t* buf)
-{
-	UART_PRINTF("fee0_fee3_0x2a9f_cb\r\n");
-}
-void set_fee0_fee4_0x2a8c_rd(uint8_t* buf)
-{
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
- 	memcpy(fee0s_env->fee4_value,buf,FEE0_FEE4_DATA_LEN);
-}
-void fee0_fee4_0x2a8c_cb(uint8_t* buf)
-{
-	UART_PRINTF("fee0_fee4_0x2a8c_cb\r\n");
-}
-
-void set_fee0_fee5_0x2a8e_rd(uint8_t* buf)
-{
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
- 	memcpy(fee0s_env->fee5_value,buf,FEE0_FEE5_DATA_LEN);
-}
-void fee0_fee5_0x2a8e_cb(uint8_t* buf)
-{
-	UART_PRINTF("fee0_fee5_0x2a8e_cb\r\n");
-}
-
-void set_fee0_fee6_0x2a9a_rd(uint8_t* buf)
-{
-	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
- 	memcpy(fee0s_env->fee6_value,buf,FEE0_FEE6_DATA_LEN);
-}
-
-//Current Time 
-void set_ff80_ff83_0x2a9f_ntf(uint8_t* buf)
-{
-	extern void app_ff81_send_lvl(uint8_t* buf, uint8_t len);
-	struct ff80s_env_tag* ff80s_env = PRF_ENV_GET(FF80S, ff80s);
-	
- 	app_ff81_send_lvl(buf,FF80_FF81_DATA_LEN);
- 	memcpy(ff80s_env->ff81_value,buf,FF80_FF81_DATA_LEN);
-}
-void ff80_ff81_0x2a9f_cb(uint8_t* buf)
-{
-	UART_PRINTF("ff80_ff81_0x2a9f_cb\r\n");
-	set_ff80_ff83_0x2a9f_ntf(buf);
-
-}
-// battery
-void set_bass_batt_0x2a19_rd(uint8_t batt)
-{
-	struct bass_env_tag* bass_env = PRF_ENV_GET(BASS, bass);
- 	bass_env->batt_lvl[0]=batt;
-}

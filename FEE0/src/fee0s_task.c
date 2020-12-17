@@ -29,7 +29,7 @@
 #include "fee0s.h"
 #include "fee0s_task.h"
 #include "prf_utils.h"
-
+#include "uart.h"
 
 
 
@@ -334,7 +334,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     cfm->status = status;
     cfm->length = length;
 
-
+    
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {
@@ -343,6 +343,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         {
             cfm->length = FEE0_FEE1_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee1_value,cfm->length);
+            UART_PRINTF("FEE0 FEE1 value gattc_read_req_ind_handler ");
         }
         // read notification information
         else if (att_idx == FEE0S_IDX_FEE1_LVL_NTF_CFG)
@@ -355,11 +356,13 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         {
             cfm->length = FEE0_FEE2_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee2_value,cfm->length);
+            UART_PRINTF("FEE0 FEE2 value gattc_read_req_ind_handler ");
         }
 		else if(att_idx == FEE0S_IDX_FEE3_LVL_VAL)
 		{
 			cfm->length = FEE0_FEE3_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee3_value,cfm->length);
+            UART_PRINTF("FEE0 FEE3 value gattc_read_req_ind_handler ");
 		}
 		else if(att_idx == FEE0S_IDX_FEE3_LVL_NTF_CFG)
 		{
@@ -371,16 +374,19 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
         {
             cfm->length = FEE0_FEE4_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee4_value,cfm->length);
+            UART_PRINTF("FEE0 FEE4 value gattc_read_req_ind_handler ");
         }
         else if(att_idx == FEE0S_IDX_FEE5_LVL_VAL)
         {
             cfm->length = FEE0_FEE5_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee5_value,cfm->length);
+            UART_PRINTF("FEE0 FEE5 value gattc_read_req_ind_handler ");
         }
         else if(att_idx == FEE0S_IDX_FEE6_LVL_VAL)
         {
             cfm->length = FEE0_FEE6_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee6_value,cfm->length);
+            UART_PRINTF("FEE0 FEE6 value gattc_read_req_ind_handler ");
         }
         else
         {

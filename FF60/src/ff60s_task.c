@@ -185,7 +185,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     uint8_t status = ff60s_get_att_idx(param->handle, &att_idx);
     uint16_t length = 0;
     struct ff60s_env_tag* ff60s_env = PRF_ENV_GET(FF60S, ff60s);
-
+    UART_PRINTF("FF62 gattc_read_req_ind_handler ");
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {

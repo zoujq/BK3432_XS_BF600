@@ -42,7 +42,7 @@
  ****************************************************************************************
  */
 
-#define FF80S_CFG_FLAG_MANDATORY_MASK       (0xF)
+#define FF80S_CFG_FLAG_MANDATORY_MASK       (0xFF)
 #define FF80_CFG_FLAG_NTF_SUP_MASK         (0x08)
 #define FF80_CFG_FLAG_MTP_FF81_MASK         (0x40)
 
@@ -58,7 +58,9 @@ enum
 	  
 		ATT_USER_SERVER_CHAR_FF81       			= ATT_UUID_16(0x2a2b),
 		
-		ATT_USER_SERVER_CHAR_FF82					= ATT_UUID_16(0xFF82),
+		ATT_USER_SERVER_CHAR_FF82					= ATT_UUID_16(0x2a0f),
+
+		ATT_USER_SERVER_CHAR_FF83					= ATT_UUID_16(0x2a14),
 		
 };
 
@@ -71,9 +73,11 @@ enum
 	FF80S_IDX_FF81_LVL_VAL,
 	FF80S_IDX_FF81_LVL_NTF_CFG,
 
-	// FF80S_IDX_FF82_LVL_CHAR,
-	// FF80S_IDX_FF82_LVL_VAL,
+	FF80S_IDX_FF82_LVL_CHAR,
+	FF80S_IDX_FF82_LVL_VAL,
 
+	FF80S_IDX_FF83_LVL_CHAR,
+	FF80S_IDX_FF83_LVL_VAL,
 
 
 	FF80S_IDX_NB,

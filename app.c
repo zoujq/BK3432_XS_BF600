@@ -228,6 +228,8 @@ void appm_init()
 		#if (BLE_FF90_SERVER)
      app_ff90_init();
 		#endif
+
+    app_sec_init();
    
 }
 
@@ -475,6 +477,10 @@ uint8_t appm_get_dev_name(uint8_t* name)
     memcpy(name, app_env.dev_name, app_env.dev_name_len);
     // return name length
     return app_env.dev_name_len;
+}
+void appm_send_seurity_req(void)
+{
+    app_sec_send_security_req(app_env.conidx);
 }
 
 

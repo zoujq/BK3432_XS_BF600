@@ -758,6 +758,26 @@ static int gapc_param_updated_ind_handler (ke_msg_id_t const msgid,
 	
 	return KE_MSG_CONSUMED;
 }
+/**
+ ****************************************************************************************
+ * @brief  APP_SEND_SECURITY_REQ
+ * @param[in] msgid     Id of the message received.
+ * @param[in] param     Pointer to the parameters of the message.
+ * @param[in] dest_id   ID of the receiving task instance
+ * @param[in] src_id    ID of the sending task instance.
+ *
+ * @return If the message was consumed or not.
+ ****************************************************************************************
+ */
+static int gapc_send_security_req_handler(ke_msg_id_t const msgid,
+        void const *param,
+        ke_task_id_t const dest_id,
+        ke_task_id_t const src_id)
+{
+    appm_send_seurity_req();
+
+    return KE_MSG_CONSUMED;
+}
 
 
 /**
@@ -870,6 +890,7 @@ const struct ke_msg_handler appm_default_state[] =
     {APP_PARAM_UPDATE_REQ_IND, 		(ke_msg_func_t)gapc_update_conn_param_req_ind_handler},
     {APP_PERIOD_TIMER,				(ke_msg_func_t)app_period_timer_handler},
     {APP_GATTC_EXC_MTU_CMD,		    (ke_msg_func_t)gattc_mtu_exchange_req_handler},
+    {APP_SEND_SECURITY_REQ,         (ke_msg_func_t)gapc_send_security_req_handler},
 };
 
 /* Specifies the message handlers that are common to all states. */

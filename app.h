@@ -134,6 +134,9 @@ struct app_env_tag
     /// Local device IRK
     uint8_t loc_irk[KEY_LEN];
 	
+		/// Peer device IRK
+    struct gapc_irk peer_irk;
+	
 };
 
 
@@ -205,7 +208,7 @@ void appm_disconnect(void);
  */
 uint8_t appm_get_dev_name(uint8_t* name);
 
-
+void appm_send_seurity_req(void);
 
 
 /// @} APP

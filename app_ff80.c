@@ -175,7 +175,7 @@ static int ff81_writer_req_handler(ke_msg_id_t const msgid,
                                    ke_task_id_t const dest_id,
                                    ke_task_id_t const src_id)
 {
-	extern void ff80_ff81_0x2a9f_cb(uint8_t* buf);
+	extern void ff80_ff81_0x2a9b_cb(uint8_t* buf);
 	// Drop the message
 	UART_PRINTF("FF81 param->value = 0x ");
 
@@ -184,7 +184,7 @@ static int ff81_writer_req_handler(ke_msg_id_t const msgid,
 		UART_PRINTF("%02x ",param->ff81_value[i]);
 	}
 	UART_PRINTF("\r\n");
-	ff80_ff81_0x2a9f_cb(param->ff81_value);
+	ff80_ff81_0x2a9b_cb(param->ff81_value);
 	return (KE_MSG_CONSUMED);
 }
 

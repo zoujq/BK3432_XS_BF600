@@ -44,7 +44,7 @@
 #define APP_DIS_MANUFACTURER_NAME_LEN   (9)
 
 /// Model Number String Value
-#define APP_DIS_MODEL_NB_STR            ("BK-BLE-1.0")
+#define APP_DIS_MODEL_NB_STR            ("BF600")
 #define APP_DIS_MODEL_NB_STR_LEN        (10)
 
 /// Serial Number
