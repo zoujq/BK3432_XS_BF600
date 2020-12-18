@@ -72,8 +72,8 @@
 #include "ff80s.h"
 #include "ff80s_task.h"
 
-#include "ff90s.h"
-#include "ff90s_task.h"
+#include "fff0s.h"
+#include "fff0s_task.h"
 
 #include "fee0s.h"
 #include "fee0s_task.h"
@@ -91,6 +91,18 @@
  void set_ff60_ff61_0x2a9b_ind(uint8_t* buf);
  void set_bass_batt_0x2a19_rd(uint8_t batt);
  void set_bass_batt_0x2a19_rd(uint8_t batt);
+extern void app_fff1_send_lvl(uint8_t* buf, uint8_t len);
+ struct 
+ { 
+ 	char user_1[12];
+ 	char user_2[12];
+ 	char user_3[12];
+ 	char user_4[12];
+ 	char user_5[12];
+ 	char user_6[12];
+ 	char user_7[12];
+ 	char user_8[12];
+ }g_scale_data;
  //Weight Scale----------------------------------------------------------------------------------
  
  //Weight Scale Feature  0x2a9e
@@ -196,8 +208,9 @@ void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf)
 void ff80_ff81_0x2a9b_cb(uint8_t* buf)
 {
 	UART_PRINTF("ff80_ff81_0x2a9b_cb\r\n");
-	set_ff80_ff81_0x2a9b_ntf(buf);
+	// set_ff80_ff81_0x2a9b_ntf(buf);
 	set_bass_batt_0x2a19_rd(80);
+
 
 }
 // battery
@@ -207,6 +220,32 @@ void set_bass_batt_0x2a19_rd(uint8_t batt)
  	bass_env->batt_lvl[0]=batt;
 }
 
+void fff0_fff1_cb(uint8_t* buf)
+{
+	static char index=0;
+	char user_1[12]={0};
+	user_1[0]=0x02;
+	UART_PRINTF("fff0_fff1_cb\r\n");
+
+	app_fff1_send_lvl(user_1,FFF0_FFF1_DATA_LEN);
+
+}
+void fff0_fff2_cb(uint8_t* buf)
+{
+	UART_PRINTF("fff0_fff2_cb\r\n");
+}
+void fff0_fff3_cb(uint8_t* buf)
+{
+	UART_PRINTF("fff0_fff3_cb\r\n");
+}
+void fff0_fff4_cb(uint8_t* buf)
+{
+	UART_PRINTF("fff0_fff4_cb\r\n");
+}
+void fff0_fff5_cb(uint8_t* buf)
+{
+	UART_PRINTF("fff0_fff5_cb\r\n");
+}
 //uart----------------------------------------------------------------------------------
  /**
   * [xs_uart_send_data description]
@@ -244,9 +283,12 @@ void set_bass_batt_0x2a19_rd(uint8_t batt)
 	
 	if(buf[0]=='1')
 	{
-		extern void app_fff1_send_lvl(uint8_t* buf, uint8_t len);
+		
+		char user_1[12]={0};
+		user_1[0]=0x02;
+		UART_PRINTF("buf[0]=='1'\r\n");
 
-		app_fff1_send_lvl("122",3);
+		app_fff1_send_lvl(user_1,FFF0_FFF1_DATA_LEN);
 
 	}
 	else  if(buf[0]=='2')

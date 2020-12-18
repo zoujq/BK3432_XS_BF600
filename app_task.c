@@ -44,9 +44,6 @@
 #include "app_ff80.h"              // fff0 Module Definition
 #include "ff80s_task.h"
 
-#include "app_ff90.h"              // fff0 Module Definition
-#include "ff90s_task.h"
-
 
 #include "app_dis.h"              // Device Information Module Definition
 #include "diss_task.h"
@@ -61,7 +58,7 @@
 #include "reg_ble_em_cs.h"
 #include "lld.h"
 #include "wdt.h"
-
+#include "app_sec.h"
 
 /*
  * LOCAL FUNCTION DEFINITIONS
@@ -603,8 +600,16 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
     {
         case (TASK_ID_GAPC):
         {
+            if ((msgid >= GAPC_BOND_CMD) &&
+                    (msgid <= GAPC_SECURITY_IND))
+            {
+                // Call the Security Module
+                msg_pol = appm_get_handler(&app_sec_table_handler, msgid, param, src_id);
+            }
             // else drop the message
-        } break;
+        }
+        break;
+
 
         case (TASK_ID_GATTC):
         {

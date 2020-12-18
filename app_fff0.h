@@ -49,6 +49,7 @@ struct app_fff0_env_tag
     uint8_t conidx;
     /// Current Battery Level
     uint8_t fff1_lvl;
+	uint8_t fff3_lvl;
 };
 /*
  * GLOBAL VARIABLES DECLARATIONS

@@ -106,9 +106,9 @@ enum appm_svc_list
 		#endif
     APPM_SVC_DIS,
     APPM_SVC_BATT,
-        #if (BLE_OADS_SERVER)
+    #if (BLE_OADS_SERVER)
     APPM_SVC_OADS,
-        #endif
+    #endif
     APPM_SVC_LIST_STOP ,
 };
 

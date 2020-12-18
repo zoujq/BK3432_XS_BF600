@@ -166,7 +166,7 @@ static void fee0s_cleanup(struct prf_task_env* env, uint8_t conidx, uint8_t reas
     fee0s_env->ntf_cfg[conidx] = 0;
 }
 
-uint16_t g_hande = 0xff;
+uint16_t g_hande_fee0 = 0xff;
 void fee0s_notify_fee1_lvl(struct fee0s_env_tag* fee0s_env, struct fee0s_fee1_level_upd_req const *param)
 {
     // Allocate the GATT notification message
@@ -178,7 +178,7 @@ void fee0s_notify_fee1_lvl(struct fee0s_env_tag* fee0s_env, struct fee0s_fee1_le
     fee1_lvl->operation = GATTC_NOTIFY;
     fee1_lvl->handle = fee0s_get_att_handle(FEE0S_IDX_FEE1_LVL_VAL);
 	// save current to g_handle
-	g_hande = fee1_lvl->handle;
+	g_hande_fee0 = fee1_lvl->handle;
     // pack measured value in database
     fee1_lvl->length = param->length;
 	memcpy(&fee1_lvl->value[0],&param->fee1_level[0],param->length);
@@ -198,7 +198,7 @@ void fee0s_notify_fee3_lvl(struct fee0s_env_tag* fee0s_env, struct fee0s_fee3_le
     fee3_lvl->operation = GATTC_INDICATE;
     fee3_lvl->handle = fee0s_get_att_handle(FEE0S_IDX_FEE3_LVL_VAL);
 	// save current to g_handle
-	g_hande = fee3_lvl->handle;
+	g_hande_fee0 = fee3_lvl->handle;
     // pack measured value in database
     fee3_lvl->length = param->length;
 	memcpy(&fee3_lvl->value[0],&param->fee3_level[0],param->length);

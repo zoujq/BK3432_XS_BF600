@@ -71,14 +71,14 @@ void app_sec_init()
 {
 	struct app_sec_tag app_nvr_tag;
 	//flash_read(FLASH_SPACE_TYPE_NVR, 0x8000, sizeof(app_nvr_tag), (uint8_t*)&app_nvr_tag);
-	if(app_nvr_tag.bond == 0x1)
-	{
-		app_sec_env.bonded = true;
-	}
-	else
-	{
+	// if(app_nvr_tag.bond == 0x1)
+	// {
+	// 	app_sec_env.bonded = true;
+	// }
+	// else
+	// {
 		app_sec_env.bonded = false;
-	}
+	// }
 
 	app_sec_env.peer_pairing = false;
 	app_sec_env.peer_encrypt = false;
