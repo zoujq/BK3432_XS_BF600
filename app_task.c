@@ -361,6 +361,8 @@ static int gapc_connection_req_ind_handler(ke_msg_id_t const msgid,
                                            ke_task_id_t const dest_id,
                                            ke_task_id_t const src_id)
 {	
+    extern void set_ble_state(char s);
+    set_ble_state(0);
 	UART_PRINTF("%s\r\n", __func__);
 	
     app_env.conidx = KE_IDX_GET(src_id);
@@ -498,6 +500,8 @@ static int gapc_disconnect_ind_handler(ke_msg_id_t const msgid,
                                       ke_task_id_t const dest_id,
                                       ke_task_id_t const src_id)
 {
+    extern void set_ble_state(char s);
+    set_ble_state(1);
 	UART_PRINTF("disconnect link reason = 0x%x\r\n",param->reason);
 	
     // Go to the ready state
@@ -565,10 +569,11 @@ static int app_period_timer_handler(ke_msg_id_t const msgid,
                                           ke_task_id_t const dest_id,
                                           ke_task_id_t const src_id)
 {
-   	UART_PRINTF("%s\r\n", __func__);
+   	UART_PRINTF("zoujq%s\r\n", __func__);
 	//gpio_triger(0x31);
 	//ke_timer_set(APP_PERIOD_TIMER, TASK_APP, 1);
 	//appm_stop_advertising();
+   ke_timer_set(APP_PERIOD_TIMER, TASK_APP, 100);    //
 
     return KE_MSG_CONSUMED;
 }
@@ -783,7 +788,17 @@ static int gapc_send_security_req_handler(ke_msg_id_t const msgid,
 
     return KE_MSG_CONSUMED;
 }
+static int app_xs_user(ke_msg_id_t const msgid,
+        void const *param,
+        ke_task_id_t const dest_id,
+        ke_task_id_t const src_id)
+{
+    extern void xs_user_task();
+    xs_user_task();
+    ke_timer_set(APP_XS_USER, TASK_APP, 10);
 
+    return KE_MSG_CONSUMED;
+}
 
 /**
  ****************************************************************************************
@@ -896,6 +911,8 @@ const struct ke_msg_handler appm_default_state[] =
     {APP_PERIOD_TIMER,				(ke_msg_func_t)app_period_timer_handler},
     {APP_GATTC_EXC_MTU_CMD,		    (ke_msg_func_t)gattc_mtu_exchange_req_handler},
     {APP_SEND_SECURITY_REQ,         (ke_msg_func_t)gapc_send_security_req_handler},
+    {APP_XS_USER,                   (ke_msg_func_t)app_xs_user},
+    
 };
 
 /* Specifies the message handlers that are common to all states. */

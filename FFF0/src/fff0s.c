@@ -36,6 +36,9 @@ const struct attm_desc fff0_att_db[FFF0S_IDX_NB] =
     // FFF0 Service Declaration
     [FFF0S_IDX_SVC]            =   {ATT_DECL_PRIMARY_SERVICE, PERM(RD, ENABLE), 0, 0},
 
+     [FFF0S_IDX_FFF6_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
+    //  Characteristic Value
+    [FFF0S_IDX_FFF6_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FFF6,PERM(RD, ENABLE), PERM(RI, ENABLE), FFF0_FFF6_DATA_LEN *sizeof(uint8_t)},
 
     [FFF0S_IDX_FFF2_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
@@ -65,6 +68,8 @@ const struct attm_desc fff0_att_db[FFF0S_IDX_NB] =
     [FFF0S_IDX_FFF5_LVL_CHAR]  =   {ATT_DECL_CHARACTERISTIC, PERM(RD, ENABLE), 0, 0},
     //  Characteristic Value
     [FFF0S_IDX_FFF5_LVL_VAL]   =   {ATT_USER_SERVER_CHAR_FFF5,PERM(RD, ENABLE), PERM(RI, ENABLE), FFF0_FFF5_DATA_LEN *sizeof(uint8_t)},
+
+  
 
 
 };/// Macro used to retrieve permission value from access and rights on attribute.

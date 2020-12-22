@@ -33,6 +33,7 @@
 #include "icu.h"
 #include "flash.h"
 #include "uart.h"      	// UART initialization
+#include "uart2.h"       // uart definition
 #include "flash.h"     // Flash initialization
 //#include "led.h"       // Led initialization
 #if (BLE_EMB_PRESENT || BT_EMB_PRESENT)
@@ -89,6 +90,7 @@ extern void code_sanity_check(void);
 
 #if (UART_DRIVER)
 void uart_rx_handler(uint8_t *buf, uint8_t len);
+void uart2_rx_handler(uint8_t *buf, uint8_t len);
 #endif
 
 #if ((UART_PRINTF_EN) &&(UART_DRIVER))
@@ -264,6 +266,8 @@ void rw_main(void)
 #if (UART_DRIVER)
 	uart_init(115200);
 	uart_cb_register(uart_rx_handler);
+	uart2_init(9600);
+	uart2_cb_register(uart2_rx_handler);
 #endif
 
 #if PLF_NVDS
@@ -367,6 +371,16 @@ static void uart_rx_handler(uint8_t *buf, uint8_t len)
 	// uart_printf("\r\n");
 	extern  void xs_uart_received_isr(uint8_t *buf, uint8_t len);
 	xs_uart_received_isr(buf, len);
+}
+static void uart2_rx_handler(uint8_t *buf, uint8_t len)
+{
+	// for(uint8_t i=0; i<len; i++)
+	// {
+	// 	UART_PRINTF("0x%x ", buf[i]);
+	// }
+	// uart_printf("\r\n");
+	extern  void xs_uart2_received_isr(uint8_t *buf, uint8_t len);
+	xs_uart2_received_isr(buf, len);
 }
 #endif
 

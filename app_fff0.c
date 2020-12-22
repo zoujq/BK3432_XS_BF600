@@ -337,7 +337,6 @@ static int fff3_period_ntf_handler(ke_msg_id_t const msgid,
 }
 
 
-
 /*
  * LOCAL VARIABLE DEFINITIONS
  ****************************************************************************************
@@ -358,7 +357,7 @@ const struct ke_msg_handler app_fff0_msg_handler_list[] =
     {FFF0S_FFF4_WRITER_REQ_IND,   (ke_msg_func_t)fff4_writer_req_handler},
     {FFF0S_FFF5_WRITER_REQ_IND,   (ke_msg_func_t)fff5_writer_req_handler},
     {FFF0S_FFF1_LEVEL_PERIOD_NTF,	(ke_msg_func_t)fff1_period_ntf_handler},
-    {FFF0S_FFF3_LEVEL_PERIOD_NTF,	(ke_msg_func_t)fff3_period_ntf_handler},
+    {FFF0S_FFF3_LEVEL_PERIOD_NTF,	(ke_msg_func_t)fff3_period_ntf_handler}
 };
 
 const struct ke_state_handler app_fff0_table_handler =

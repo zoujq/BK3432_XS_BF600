@@ -94,21 +94,21 @@ typedef void (*appm_add_svc_func_t)(void);
 enum appm_svc_list
 {
     APPM_SVC_FFF0,
-		#if (BLE_FFA0_SERVER)
+#if (BLE_FFA0_SERVER)
     APPM_SVC_FFA0,
-		#endif
+#endif
     APPM_SVC_FF50,
     APPM_SVC_FF60,
     APPM_SVC_FEE0,
     APPM_SVC_FF80,
-		#if (BLE_FF90_SERVER)
+#if (BLE_FF90_SERVER)
     APPM_SVC_FF90,
-		#endif
+#endif
     APPM_SVC_DIS,
     APPM_SVC_BATT,
-    #if (BLE_OADS_SERVER)
+#if (BLE_OADS_SERVER)
     APPM_SVC_OADS,
-    #endif
+#endif
     APPM_SVC_LIST_STOP ,
 };
 
@@ -119,31 +119,32 @@ enum appm_svc_list
 
 /// Application Task Descriptor
 static const struct ke_task_desc TASK_DESC_APP = {NULL, &appm_default_handler,
-                                                  appm_state, APPM_STATE_MAX, APP_IDX_MAX};
+           appm_state, APPM_STATE_MAX, APP_IDX_MAX
+};
 
 /// List of functions used to create the database
 static const appm_add_svc_func_t appm_add_svc_func_list[APPM_SVC_LIST_STOP] =
 {
     (appm_add_svc_func_t)app_ff50_add_ff50s,
     (appm_add_svc_func_t)app_ff60_add_ff60s,
-    (appm_add_svc_func_t)app_fee0_add_fee0s,    
-		#if (BLE_FF80_SERVER)
+    (appm_add_svc_func_t)app_fee0_add_fee0s,
+#if (BLE_FF80_SERVER)
     (appm_add_svc_func_t)app_ff80_add_ff80s,
-		#endif
-		#if (BLE_FF90_SERVER)
+#endif
+#if (BLE_FF90_SERVER)
     (appm_add_svc_func_t)app_ff90_add_ff90s,
-		#endif
-		#if (BLE_FFA0_SERVER)
+#endif
+#if (BLE_FFA0_SERVER)
     (appm_add_svc_func_t)app_ffa0_add_ffa0s,
-		#endif
-		#if (BLE_FFF0_SERVER)
+#endif
+#if (BLE_FFF0_SERVER)
     (appm_add_svc_func_t)app_fff0_add_fff0s,
-		#endif    
+#endif
     (appm_add_svc_func_t)app_dis_add_dis,
     (appm_add_svc_func_t)app_batt_add_bas,
-        #if (BLE_OADS_SERVER)
+#if (BLE_OADS_SERVER)
     (appm_add_svc_func_t)app_oad_add_oads,
-        #endif    
+#endif
 };
 
 /*
@@ -170,13 +171,13 @@ void appm_init()
     // Initialize Task state
     ke_state_set(TASK_APP, APPM_INIT);
 
-	app_env.dev_name_len = sizeof(APP_DFLT_DEVICE_NAME);
-	memcpy(&app_env.dev_name[0], APP_DFLT_DEVICE_NAME, sizeof(APP_DFLT_DEVICE_NAME));
+    app_env.dev_name_len = sizeof(APP_DFLT_DEVICE_NAME);
+    memcpy(&app_env.dev_name[0], APP_DFLT_DEVICE_NAME, sizeof(APP_DFLT_DEVICE_NAME));
 
 #if (NVDS_SUPPORT)
-	  uint8_t key_len = KEY_LEN;
+    uint8_t key_len = KEY_LEN;
     if (nvds_get(NVDS_TAG_LOC_IRK, &key_len, app_env.loc_irk) != NVDS_OK)
-#endif        
+#endif
     {
         uint8_t counter;
 
@@ -191,7 +192,7 @@ void appm_init()
         {
             ASSERT_INFO(0, NVDS_TAG_LOC_IRK, 0);
         }
-#endif        
+#endif
     }
 
 
@@ -203,34 +204,38 @@ void appm_init()
     app_dis_init();
 
     // Battery Module
-    app_batt_init();	
-        #if (BLE_OADS_SERVER)
-    app_oads_init();	
-        #endif
-		#if (BLE_FFF0_SERVER)
-     app_fff0_init();
-		#endif
-		#if (BLE_FFA0_SERVER)
-     app_ffa0_init();
-		#endif
-		#if (BLE_FF50_SERVER)
-     app_ff50_init();
-		#endif
-		#if (BLE_FF60_SERVER)
-     app_ff60_init();
-		#endif
-		#if (BLE_FEE0_SERVER)
-     app_fee0_init();
-		#endif
-		#if (BLE_FF80_SERVER)
-     app_ff80_init();
-		#endif
-		#if (BLE_FF90_SERVER)
-     app_ff90_init();
-		#endif
+    app_batt_init();
+#if (BLE_OADS_SERVER)
+    app_oads_init();
+#endif
+#if (BLE_FFF0_SERVER)
+    app_fff0_init();
+#endif
+#if (BLE_FFA0_SERVER)
+    app_ffa0_init();
+#endif
+#if (BLE_FF50_SERVER)
+    app_ff50_init();
+#endif
+#if (BLE_FF60_SERVER)
+    app_ff60_init();
+#endif
+#if (BLE_FEE0_SERVER)
+    app_fee0_init();
+#endif
+#if (BLE_FF80_SERVER)
+    app_ff80_init();
+#endif
+#if (BLE_FF90_SERVER)
+    app_ff90_init();
+#endif
 
     app_sec_init();
-   
+
+    {
+        extern void init_ble_state();
+        init_ble_state();
+    }
 }
 
 bool appm_add_svc(void)
@@ -259,8 +264,8 @@ bool appm_add_svc(void)
 void appm_disconnect(void)
 {
     struct gapc_disconnect_cmd *cmd = KE_MSG_ALLOC(GAPC_DISCONNECT_CMD,
-                                                   KE_BUILD_ID(TASK_GAPC, app_env.conidx), TASK_APP,
-                                                   gapc_disconnect_cmd);
+                                      KE_BUILD_ID(TASK_GAPC, app_env.conidx), TASK_APP,
+                                      gapc_disconnect_cmd);
 
     cmd->operation = GAPC_DISCONNECT;
     cmd->reason    = CO_ERROR_REMOTE_USER_TERM_CON;
@@ -270,24 +275,24 @@ void appm_disconnect(void)
 }
 
 void appm_start_advertising(void)
-{	
+{
     // Check if the advertising procedure is already is progress
     if (ke_state_get(TASK_APP) == APPM_READY)
-    {				
+    {
         // Prepare the GAPM_START_ADVERTISE_CMD message
         struct gapm_start_advertise_cmd *cmd = KE_MSG_ALLOC(GAPM_START_ADVERTISE_CMD,
-                                                            TASK_GAPM, TASK_APP,
-                                                            gapm_start_advertise_cmd);
+                                               TASK_GAPM, TASK_APP,
+                                               gapm_start_advertise_cmd);
 
         cmd->op.addr_src    = GAPM_STATIC_ADDR;
         cmd->channel_map    = APP_ADV_CHMAP;
-        cmd->intv_min 		= APP_ADV_INT_MIN;
-        cmd->intv_max 		= APP_ADV_INT_MAX;	
+        cmd->intv_min       = APP_ADV_INT_MIN;
+        cmd->intv_max       = APP_ADV_INT_MAX;
         cmd->op.code        = GAPM_ADV_UNDIRECT;
-		
+
         cmd->info.host.mode = GAP_GEN_DISCOVERABLE;
 
- 		/*-----------------------------------------------------------------------------------
+        /*-----------------------------------------------------------------------------------
          * Set the Advertising Data and the Scan Response Data
          *---------------------------------------------------------------------------------*/
         // Flag value is set by the GAP
@@ -296,9 +301,9 @@ void appm_start_advertising(void)
 
 #if (NVDS_SUPPORT)
         // Advertising Data
-        if(nvds_get(NVDS_TAG_APP_BLE_ADV_DATA, &cmd->info.host.adv_data_len,
-                    &cmd->info.host.adv_data[0]) != NVDS_OK)
-#endif                    
+        if (nvds_get(NVDS_TAG_APP_BLE_ADV_DATA, &cmd->info.host.adv_data_len,
+                     &cmd->info.host.adv_data[0]) != NVDS_OK)
+#endif
         {
             //cmd->info.host.adv_data_len = 0;
 
@@ -306,30 +311,30 @@ void appm_start_advertising(void)
             cmd->info.host.adv_data[1] = GAP_AD_TYPE_FLAGS;
             cmd->info.host.adv_data[2] = GAP_BR_EDR_NOT_SUPPORTED;
             // set mode in ad_type
-            switch(cmd->info.host.mode)
+            switch (cmd->info.host.mode)
             {
-                // General discoverable mode
-                case GAP_GEN_DISCOVERABLE:
-                {
-                    cmd->info.host.adv_data[2] |= GAP_LE_GEN_DISCOVERABLE_FLG;
-                }
-                break;
-                // Limited discoverable mode
-                case GAP_LIM_DISCOVERABLE:
-                {
-                    cmd->info.host.adv_data[2] |= GAP_LE_LIM_DISCOVERABLE_FLG;
-                }
-                break;
-                default: break; // do nothing
+            // General discoverable mode
+            case GAP_GEN_DISCOVERABLE:
+            {
+                cmd->info.host.adv_data[2] |= GAP_LE_GEN_DISCOVERABLE_FLG;
             }
-            cmd->info.host.adv_data_len=3;
-            //Add list of UUID and appearance						
+            break;
+            // Limited discoverable mode
+            case GAP_LIM_DISCOVERABLE:
+            {
+                cmd->info.host.adv_data[2] |= GAP_LE_LIM_DISCOVERABLE_FLG;
+            }
+            break;
+            default: break; // do nothing
+            }
+            cmd->info.host.adv_data_len = 3;
+            //Add list of UUID and appearance
             memcpy(&cmd->info.host.adv_data[cmd->info.host.adv_data_len],
                    APP_FFF0_ADV_DATA_UUID, APP_FFF0_ADV_DATA_UUID_LEN);
             cmd->info.host.adv_data_len += APP_FFF0_ADV_DATA_UUID_LEN;
         }
 
-		//  Device Name Length
+        //  Device Name Length
         uint8_t device_name_length;
         uint8_t device_name_avail_space;
         uint8_t device_name_temp_buf[APP_DEVICE_NAME_LENGTH_MAX];
@@ -340,60 +345,62 @@ void appm_start_advertising(void)
         // Check if data can be added to the Advertising data
         if (device_name_avail_space > 2)
         {
-						
+
             device_name_length = NVDS_LEN_DEVICE_NAME;
-#if (NVDS_SUPPORT)            
+#if (NVDS_SUPPORT)
             if (nvds_get(NVDS_TAG_DEVICE_NAME, &device_name_length,
                          &device_name_temp_buf[0]) != NVDS_OK)
-#endif                         
+#endif
             {
                 device_name_length = strlen(APP_DFLT_DEVICE_NAME);
                 // Get default Device Name (No name if not enough space)
                 memcpy(&device_name_temp_buf[0], APP_DFLT_DEVICE_NAME, device_name_length);
             }
-							
-	     	if(device_name_length > 0)
+
+            if (device_name_length > 0)
             {
                 // Check available space
                 device_name_length = co_min(device_name_length, device_name_avail_space);
                 cmd->info.host.adv_data[cmd->info.host.adv_data_len]     = device_name_length + 1;
-								 
+
                 // Fill Device Name Flag
                 cmd->info.host.adv_data[cmd->info.host.adv_data_len + 1] = '\x09';
                 // Copy device name
                 memcpy(&cmd->info.host.adv_data[cmd->info.host.adv_data_len + 2],
-                device_name_temp_buf, device_name_length);
+                       device_name_temp_buf, device_name_length);
 
                 // Update Advertising Data Length
-                cmd->info.host.adv_data_len += (device_name_length + 2);					
+                cmd->info.host.adv_data_len += (device_name_length + 2);
             }
-          
+
         }
 #if (NVDS_SUPPORT)
         // Scan Response Data
-        if(nvds_get(NVDS_TAG_APP_BLE_SCAN_RESP_DATA, &cmd->info.host.scan_rsp_data_len,
-                    &cmd->info.host.scan_rsp_data[0]) != NVDS_OK)
-#endif                    
+        if (nvds_get(NVDS_TAG_APP_BLE_SCAN_RESP_DATA, &cmd->info.host.scan_rsp_data_len,
+                     &cmd->info.host.scan_rsp_data[0]) != NVDS_OK)
+#endif
         {
             cmd->info.host.scan_rsp_data_len = 0;
 
-			memcpy(&cmd->info.host.scan_rsp_data[cmd->info.host.scan_rsp_data_len],
+            memcpy(&cmd->info.host.scan_rsp_data[cmd->info.host.scan_rsp_data_len],
                    APP_SCNRSP_DATA, APP_SCNRSP_DATA_LEN);
             cmd->info.host.scan_rsp_data_len += APP_SCNRSP_DATA_LEN;
         }
 
         // Send the message
         ke_msg_send(cmd);
-	 	UART_PRINTF("appm start advertising\r\n");
+        UART_PRINTF("appm start advertising\r\n");
 
-		wdt_enable(0x3fff);
+        wdt_enable(0x3fff);
 
         // Set the state of the task to APPM_ADVERTISING
-        ke_state_set(TASK_APP, APPM_ADVERTISING);	
+        ke_state_set(TASK_APP, APPM_ADVERTISING);
 
-		//ke_timer_set(APP_PERIOD_TIMER, TASK_APP, 1500);	
+        // ke_timer_set(APP_PERIOD_TIMER, TASK_APP, 100);
+        ke_timer_set(APP_XS_USER, TASK_APP, 50);
+
     }
-	
+
     // else ignore the request
 }
 
@@ -408,14 +415,14 @@ void appm_stop_advertising(void)
 
         // Prepare the GAPM_CANCEL_CMD message
         struct gapm_cancel_cmd *cmd = KE_MSG_ALLOC(GAPM_CANCEL_CMD,
-                                                   TASK_GAPM, TASK_APP,
-                                                   gapm_cancel_cmd);
+                                      TASK_GAPM, TASK_APP,
+                                      gapm_cancel_cmd);
         cmd->operation = GAPM_CANCEL;
 
         // Send the message
         ke_msg_send(cmd);
 
-		wdt_disable_flag = 1;
+        wdt_disable_flag = 1;
     }
     // else ignore the request
 }
@@ -426,8 +433,8 @@ void appm_update_param(struct gapc_conn_param *conn_param)
 {
     // Prepare the GAPC_PARAM_UPDATE_CMD message
     struct gapc_param_update_cmd *cmd = KE_MSG_ALLOC(GAPC_PARAM_UPDATE_CMD,
-                                                     KE_BUILD_ID(TASK_GAPC, app_env.conidx), TASK_APP,
-                                                     gapc_param_update_cmd);
+                                        KE_BUILD_ID(TASK_GAPC, app_env.conidx), TASK_APP,
+                                        gapc_param_update_cmd);
 
     cmd->operation  = GAPC_UPDATE_PARAMS;
     cmd->intv_min   = conn_param->intv_min;
@@ -438,36 +445,36 @@ void appm_update_param(struct gapc_conn_param *conn_param)
     // not used by a slave device
     cmd->ce_len_min = 0xFFFF;
     cmd->ce_len_max = 0xFFFF;
-		
+
     UART_PRINTF("intv_min = %d,intv_max = %d,latency = %d,time_out = %d\r\n",
-		cmd->intv_min,cmd->intv_max,cmd->latency,cmd->time_out);
-	
+                cmd->intv_min, cmd->intv_max, cmd->latency, cmd->time_out);
+
     // Send the message
     ke_msg_send(cmd);
 }
 
 void appm_update_adv_data( uint8_t* adv_buff, uint8_t adv_len, uint8_t* scan_buff, uint8_t scan_len)
 {
-	if (ke_state_get(TASK_APP) == APPM_ADVERTISING 
-                 && (adv_len <= ADV_DATA_LEN) && (scan_len <= ADV_DATA_LEN))
-	{
-		struct gapm_update_advertise_data_cmd *cmd =  KE_MSG_ALLOC(
-            		            GAPM_UPDATE_ADVERTISE_DATA_CMD,
-            		            TASK_GAPM,
-            		            TASK_APP,
-            		            gapm_update_advertise_data_cmd);
+    if (ke_state_get(TASK_APP) == APPM_ADVERTISING
+            && (adv_len <= ADV_DATA_LEN) && (scan_len <= ADV_DATA_LEN))
+    {
+        struct gapm_update_advertise_data_cmd *cmd =  KE_MSG_ALLOC(
+                    GAPM_UPDATE_ADVERTISE_DATA_CMD,
+                    TASK_GAPM,
+                    TASK_APP,
+                    gapm_update_advertise_data_cmd);
 
-		cmd->operation = GAPM_UPDATE_ADVERTISE_DATA;
-		cmd->adv_data_len = adv_len;
-		cmd->scan_rsp_data_len = scan_len;
+        cmd->operation = GAPM_UPDATE_ADVERTISE_DATA;
+        cmd->adv_data_len = adv_len;
+        cmd->scan_rsp_data_len = scan_len;
 
-		//memcpy
-		memcpy(&cmd->adv_data[0], adv_buff, adv_len);
-		memcpy(&cmd->scan_rsp_data[0], scan_buff, scan_len);
-        
-		// Send the message
-		ke_msg_send(cmd);
-	}
+        //memcpy
+        memcpy(&cmd->adv_data[0], adv_buff, adv_len);
+        memcpy(&cmd->scan_rsp_data[0], scan_buff, scan_len);
+
+        // Send the message
+        ke_msg_send(cmd);
+    }
 }
 
 

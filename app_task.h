@@ -84,6 +84,7 @@ enum appm_msg
 	
 	APP_PERIOD_TIMER,	
 	APP_GATTC_EXC_MTU_CMD,
+    APP_XS_USER
 };
 
 

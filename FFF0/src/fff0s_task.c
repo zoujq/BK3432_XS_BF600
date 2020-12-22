@@ -318,7 +318,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     cfm->status = status;
     cfm->length = length;
 
-    
+    UART_PRINTF("FFF0 gattc_read_req_ind_handler,status:%d,%d\n ",status,att_idx);
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {
