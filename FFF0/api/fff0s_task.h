@@ -33,8 +33,6 @@
 #define  FFF0_FFF4_DATA_LEN  3
 #define  FFF0_FFF3_DATA_LEN  1
 #define  FFF0_FFF5_DATA_LEN  4
-#define  FFF0_FFF6_DATA_LEN  1
-
 
 
 /*
@@ -224,15 +222,6 @@ struct fff0s_fff5_writer_ind
 {
     /// Alert level
     uint8_t fff5_value[FFF0_FFF5_DATA_LEN];
-    
-    uint8_t length;
-    /// Connection index
-    uint8_t conidx;
-};
-struct fff0s_fff6_writer_ind
-{
-    /// Alert level
-    uint8_t fff6_value[FFF0_FFF6_DATA_LEN];
     
     uint8_t length;
     /// Connection index

@@ -344,6 +344,11 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
             cfm->length = FEE0_FEE1_DATA_LEN;
             memcpy(cfm->value,fee0s_env->fee1_value,cfm->length);
             UART_PRINTF("FEE0 FEE1 value gattc_read_req_ind_handler ");
+
+            for(uint8_t i=0; i<cfm->length; i++)
+            {
+                UART_PRINTF("%02X ", cfm->value[i]);
+            }
         }
         // read notification information
         else if (att_idx == FEE0S_IDX_FEE1_LVL_NTF_CFG)
@@ -393,7 +398,10 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
             status = PRF_APP_ERROR;
         }
     }
-    
+    for(uint8_t i=0; i<cfm->length; i++)
+    {
+        UART_PRINTF("%02X ", cfm->value[i]);
+    }
     ke_msg_send(cfm);
 
     return (KE_MSG_CONSUMED);

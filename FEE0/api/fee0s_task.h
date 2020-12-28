@@ -34,7 +34,7 @@
 #define  FEE0_FEE3_DATA_LEN  19
 
 #define  FEE0_FEE4_DATA_LEN  1
-#define  FEE0_FEE5_DATA_LEN  1
+#define  FEE0_FEE5_DATA_LEN  2
 #define  FEE0_FEE6_DATA_LEN  1
 
 /*

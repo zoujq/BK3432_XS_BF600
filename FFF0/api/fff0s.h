@@ -42,7 +42,7 @@
  ****************************************************************************************
  */
 
-#define FFF0S_CFG_FLAG_MANDATORY_MASK       (0x1FFF)
+#define FFF0S_CFG_FLAG_MANDATORY_MASK       (0x3FFF)
 #define FFF0_CFG_FLAG_NTF_SUP_MASK          (0x08)
 #define FFF0_CFG_FLAG_MTP_FFF1_MASK         (0x40)
 
@@ -64,10 +64,7 @@ enum
 
 		ATT_USER_SERVER_CHAR_FFF3					= ATT_UUID_16(0xFFF4),
 
-		ATT_USER_SERVER_CHAR_FFF5					= ATT_UUID_16(0xFFF5),	
-
-		ATT_USER_SERVER_CHAR_FFF6					= ATT_UUID_16(0xFFF6),		
-	
+		ATT_USER_SERVER_CHAR_FFF5					= ATT_UUID_16(0xFFF5),		
 		
 };
 
@@ -91,13 +88,9 @@ enum
 	FFF0S_IDX_FFF3_LVL_NTF_CFG,	
 
 	FFF0S_IDX_FFF5_LVL_CHAR,
-	FFF0S_IDX_FFF5_LVL_VAL,	
+	FFF0S_IDX_FFF5_LVL_VAL,		
 
-	FFF0S_IDX_FFF6_LVL_CHAR,
-	FFF0S_IDX_FFF6_LVL_VAL,	
-	
-
-	FFF0S_IDX_NB,
+	FFF0S_IDX_NB
 };
 
 /*
@@ -127,7 +120,6 @@ struct fff0s_env_tag
 
 	uint8_t fff5_value[FFF0_FFF5_DATA_LEN];
 
-	uint8_t fff6_value[FFF0_FFF6_DATA_LEN];
 	
     /// BASS task state
     ke_state_t state[FFF0S_IDX_MAX];

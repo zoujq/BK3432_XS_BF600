@@ -218,22 +218,22 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
 			// Send the message
 			ke_msg_send(ind);
 		}
-        else if (att_idx == FFF0S_IDX_FFF2_LVL_VAL)
-        {
-            
-            // Allocate the alert value change indication
-            struct fff0s_fff2_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF2_WRITER_REQ_IND,
-                    prf_dst_task_get(&(fff0s_env->prf_env), conidx),
-                    dest_id, fff0s_fff2_writer_ind);
-            
-            // Fill in the parameter structure  
-            memcpy(ind->fff2_value,&param->value,param->length);
-            ind->conidx = conidx;
-            ind->length = param->length;
-            
-            // Send the message
-            ke_msg_send(ind);
-        }
+       else if (att_idx == FFF0S_IDX_FFF2_LVL_VAL)
+       {
+           
+           // Allocate the alert value change indication
+           struct fff0s_fff2_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF2_WRITER_REQ_IND,
+                   prf_dst_task_get(&(fff0s_env->prf_env), conidx),
+                   dest_id, fff0s_fff2_writer_ind);
+           
+           // Fill in the parameter structure  
+           memcpy(ind->fff2_value,&param->value,param->length);
+           ind->conidx = conidx;
+           ind->length = param->length;
+           
+           // Send the message
+           ke_msg_send(ind);
+       }
         else if (att_idx == FFF0S_IDX_FFF3_LVL_VAL)
         {
             
@@ -250,38 +250,38 @@ static int gattc_write_req_ind_handler(ke_msg_id_t const msgid, struct gattc_wri
             // Send the message
             ke_msg_send(ind);
         }
-        else if (att_idx == FFF0S_IDX_FFF4_LVL_VAL)
-        {
-            
-            // Allocate the alert value change indication
-            struct fff0s_fff4_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF4_WRITER_REQ_IND,
-                    prf_dst_task_get(&(fff0s_env->prf_env), conidx),
-                    dest_id, fff0s_fff4_writer_ind);
-            
-            // Fill in the parameter structure  
-            memcpy(ind->fff4_value,&param->value,param->length);
-            ind->conidx = conidx;
-            ind->length = param->length;
-            
-            // Send the message
-            ke_msg_send(ind);
-        }
-        else if (att_idx == FFF0S_IDX_FFF5_LVL_VAL)
-        {
-            
-            // Allocate the alert value change indication
-            struct fff0s_fff5_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF5_WRITER_REQ_IND,
-                    prf_dst_task_get(&(fff0s_env->prf_env), conidx),
-                    dest_id, fff0s_fff5_writer_ind);
-            
-            // Fill in the parameter structure  
-            memcpy(ind->fff5_value,&param->value,param->length);
-            ind->conidx = conidx;
-            ind->length = param->length;
-            
-            // Send the message
-            ke_msg_send(ind);
-        }
+       else if (att_idx == FFF0S_IDX_FFF4_LVL_VAL)
+       {
+           
+           // Allocate the alert value change indication
+           struct fff0s_fff4_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF4_WRITER_REQ_IND,
+                   prf_dst_task_get(&(fff0s_env->prf_env), conidx),
+                   dest_id, fff0s_fff4_writer_ind);
+           
+           // Fill in the parameter structure  
+           memcpy(ind->fff4_value,&param->value,param->length);
+           ind->conidx = conidx;
+           ind->length = param->length;
+           
+           // Send the message
+           ke_msg_send(ind);
+       }
+       else if (att_idx == FFF0S_IDX_FFF5_LVL_VAL)
+       {
+           
+           // Allocate the alert value change indication
+           struct fff0s_fff5_writer_ind *ind = KE_MSG_ALLOC(FFF0S_FFF5_WRITER_REQ_IND,
+                   prf_dst_task_get(&(fff0s_env->prf_env), conidx),
+                   dest_id, fff0s_fff5_writer_ind);
+           
+           // Fill in the parameter structure  
+           memcpy(ind->fff5_value,&param->value,param->length);
+           ind->conidx = conidx;
+           ind->length = param->length;
+           
+           // Send the message
+           ke_msg_send(ind);
+       }
         else
         {
             status = PRF_APP_ERROR;
@@ -318,7 +318,6 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     cfm->status = status;
     cfm->length = length;
 
-    UART_PRINTF("FFF0 gattc_read_req_ind_handler,status:%d,%d\n ",status,att_idx);
     // If the attribute has been found, status is GAP_ERR_NO_ERROR
     if (status == GAP_ERR_NO_ERROR)
     {
@@ -336,12 +335,12 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
             uint16_t ntf_cfg = (fff0s_env->ntf_cfg[conidx] & FFF0_FFF1_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
             co_write16p(cfm->value, ntf_cfg);
         }
-        else if(att_idx == FFF0S_IDX_FFF2_LVL_VAL)
-        {
-            cfm->length = FFF0_FFF2_DATA_LEN;
-            memcpy(cfm->value,fff0s_env->fff2_value,cfm->length);
-            UART_PRINTF("FFF0 FFF2 value gattc_read_req_ind_handler ");
-        }
+       else if(att_idx == FFF0S_IDX_FFF2_LVL_VAL)
+       {
+           cfm->length = FFF0_FFF2_DATA_LEN;
+           memcpy(cfm->value,fff0s_env->fff2_value,cfm->length);
+           UART_PRINTF("FFF0 FFF2 value gattc_read_req_ind_handler ");
+       }
 		else if(att_idx == FFF0S_IDX_FFF3_LVL_VAL)
 		{
 			cfm->length = FFF0_FFF3_DATA_LEN;
@@ -354,12 +353,12 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
             uint16_t ntf_cfg = (fff0s_env->ntf_cfg[conidx] & FFF0_FFF3_LVL_NTF_SUP) ? PRF_CLI_START_NTF : PRF_CLI_STOP_NTFIND;
             co_write16p(cfm->value, ntf_cfg);
 		}
-        else if(att_idx == FFF0S_IDX_FFF4_LVL_VAL)
-        {
-            cfm->length = FFF0_FFF4_DATA_LEN;
-            memcpy(cfm->value,fff0s_env->fff4_value,cfm->length);
-            UART_PRINTF("FFF0 FFF4 value gattc_read_req_ind_handler ");
-        }
+       else if(att_idx == FFF0S_IDX_FFF4_LVL_VAL)
+       {
+           cfm->length = FFF0_FFF4_DATA_LEN;
+           memcpy(cfm->value,fff0s_env->fff4_value,cfm->length);
+           UART_PRINTF("FFF0 FFF4 value gattc_read_req_ind_handler ");
+       }
         else if(att_idx == FFF0S_IDX_FFF5_LVL_VAL)
         {
             cfm->length = FFF0_FFF5_DATA_LEN;
