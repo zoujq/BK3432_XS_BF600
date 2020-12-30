@@ -58,6 +58,7 @@
 #include "rtc.h"
 #include "prf_utils.h"
 #include "uart2.h"       // uart definition
+#include "icu.h"
 
 #include "gap.h"
 #include "gattc_task.h"
@@ -94,7 +95,7 @@ void set_bass_batt_0x2a19_rd(uint8_t batt);
 void set_bass_batt_0x2a19_rd(uint8_t batt);
 extern void app_fff1_send_lvl(uint8_t* buf, uint8_t len);
 extern void app_fff3_send_lvl(uint8_t* buf, uint8_t len);
-void xs_uart2_send_data(uint8_t *buf, uint8_t len);
+void xs_uart_send_data(uint8_t *buf, uint8_t len);
 unsigned short day_of_year(unsigned short y,unsigned short m,unsigned short d);
 void set_fee0_fee2_0x2a85_rd(uint8_t* buf);
 void set_fee0_fee3_0x2a9f_ntf(uint8_t* buf,uint8_t len);
@@ -116,17 +117,22 @@ void delay_1s_send_time(int t);
 void delay_1s_send_user_birthday(int t);
 void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf);
 void delay_1s_modify_user_birthday(int t);
-void update_user_info();
 void update_weight_body_measurement(uint8_t *buf);
 void ji_huo_scale_and_send();
 void delay_1s_send_resgist_ok(int t);
 void delay_1s_send_take_measure(int t);
 void delay_1s_updata_db(int t);
 void delay_1s_get_user_info(int t);
+void set_fff0_fff2_rd(uint8_t* buf);
+uint8_t ignore_repetition(uint8_t *b);
+void delay_1s_update_user_info(int t);
 
 
 uint8_t g_user_num=0;
+//[0]=flag [1]=user id [2,3,4]=init [5,6]=year [7]=month [8]=day [9]=height [10]=sex [11]=active
+//[12,13]=CONSENT [14,15]=weight/BF  [16,17]=DB
 uint8_t g_user_list[18]={0x00,0x01,0xFF,0xFF,0xFF,0xC7,0x07,0x0A,0x01,0xA5,0x01,0x03,0,0,0,0,0,0};
+uint8_t g_user_info[18]={0x00,0x01,0xFF,0xFF,0xFF,0xC7,0x07,0x0A,0x01,0xA5,0x01,0x03,0,0,0,0,0,0};
 uint8_t g_user_select[3]={0};
 uint8_t g_user_select_index=0xff;
 uint8_t g_curr_time[8];
@@ -165,6 +171,7 @@ void xs_user_task()
 	delay_1s_send_take_measure(0);
 	delay_1s_updata_db(0);
 	delay_1s_get_user_info(0);
+	delay_1s_update_user_info(0);
 
 }
 void init_ble_state()
@@ -176,29 +183,41 @@ void init_ble_state()
 	UART_PRINTF("init_ble_state:1\n");
 
 }
+// s=0 已连接   s=1 未连接
 void set_ble_state(uint8_t s)
 {
 	gpio_set(BLE_STATE_PIN, s);
 
 	g_ble_state=s;
 	g_user_registing=0;
+
+	if(s==0)
+	{
+		icu_set_sleep_mode(1);
+	}
+	else
+	{
+		icu_set_sleep_mode(0);
+	}
+	
+
 }
 //uart----------------------------------------------------------------------------------
 
- void xs_uart_send_data(uint8_t *buf, uint8_t len)
+ void xs_uart2_send_data(uint8_t *buf, uint8_t len)
  {
- 	UART_PRINTF("uart_tx:");
+ 	UART_PRINTF("uart2_tx:");
  	for(uint8_t i=0; i<len; i++)
 	{
 		UART_PRINTF("%x ", buf[i]);
 	}
 	UART_PRINTF("\r\n");
- 	uart_write(buf,len,NULL,NULL);
+ 	uart2_write(buf,len,NULL,NULL);
  }
 
- void xs_uart_received_isr(uint8_t *buf, uint8_t len)
+ void xs_uart2_received_isr(uint8_t *buf, uint8_t len)
  {
- 	UART_PRINTF("uart_rx:");
+ 	UART_PRINTF("uart2_rx:");
  	for(uint8_t i=0; i<len; i++)
 	{
 		UART_PRINTF("%02x ", buf[i]);
@@ -211,15 +230,15 @@ void set_ble_state(uint8_t s)
 	}
  }
  //uart2_write("123456",6,0,0);
- void xs_uart2_send_data(uint8_t *buf, uint8_t len)
+ void xs_uart_send_data(uint8_t *buf, uint8_t len)
  {
- 	UART_PRINTF("uart2_tx:");
+ 	UART_PRINTF("uart_tx:");
  	for(uint8_t i=0; i<len; i++)
 	{
 		UART_PRINTF("%02X ", buf[i]);
 	}
 	UART_PRINTF("\r\n");
- 	uart2_write(buf,len,NULL,NULL);
+ 	uart_write(buf,len,NULL,NULL);
  	if(g_scale_state==0)
  	{
  		g_last_msg_set=1;
@@ -227,6 +246,11 @@ void set_ble_state(uint8_t s)
  		UART_PRINTF("g_last_msg_set=1\n");
  	}
  	
+ }
+ void clear_uart_received_buf()
+ {	
+ 	uint8_t b[8]={0};
+ 	ignore_repetition(b);
  }
  uint8_t ignore_repetition(uint8_t *b)
  {
@@ -257,9 +281,9 @@ void set_ble_state(uint8_t s)
  		return 0;
  	}
  }
- void xs_uart2_received_isr(uint8_t *buf, uint8_t len)
+ void xs_uart_received_isr(uint8_t *buf, uint8_t len)
  {
- 	UART_PRINTF("uart2_rx:");
+ 	UART_PRINTF("uart1_rx:");
  	for(uint8_t i=0; i<len; i++)
 	{
 		UART_PRINTF("%02X ", buf[i]);
@@ -274,6 +298,7 @@ void set_ble_state(uint8_t s)
 		g_scale_state=1;
 		if(buf[6]==0xBA)
 		{
+			uint8_t fff2_buf[8]={0};
 			struct bass_env_tag* bass_env = PRF_ENV_GET(BASS, bass);
 			if(buf[2]>0x1F)
 			{
@@ -285,6 +310,11 @@ void set_ble_state(uint8_t s)
 			}
 			buf[2]=(buf[2]-0x15)*10;
  			bass_env->batt_lvl[0]=buf[2];
+
+ 			fff2_buf[4]=buf[3];
+ 			fff2_buf[1]=buf[4]>>1;
+
+ 			set_fff0_fff2_rd(fff2_buf);
  			
 		}
 		else if(buf[6]==0xBD)
@@ -294,11 +324,13 @@ void set_ble_state(uint8_t s)
 		}
 		else if(buf[6]==0xE0)
 		{
-			g_user_list[10]=buf[2];
+			g_user_list[10]=(buf[2]==1?0:1);
 			g_user_list[6]=0x07;
 			g_user_list[5]=buf[3];
 			g_user_list[7]=buf[4];
 			g_user_list[8]=buf[5];
+			
+			g_user_info[10]=(buf[2]==1?0:1);
 
 		}
 		else if(buf[6]==0xE1)
@@ -319,6 +351,7 @@ void set_ble_state(uint8_t s)
 			uint8_t buff_2a9f[4];
 			g_user_list[0]=0;
 			g_user_list[1]=buf[2];
+			set_select_user_info_to_ble_chara();
 			if(g_get_user_list==1)
 			{
 				app_fff1_send_lvl(g_user_list,FFF0_FFF1_DATA_LEN);
@@ -362,14 +395,21 @@ void set_ble_state(uint8_t s)
 		{
 			delay_1s_modify_user_birthday(10);
 		}
-		else if(buf[2]==0x11)
+		else if(buf[2]==0x11 && buf[6]==0)
 		{
-			g_user_list[1]=buf[3];	
-			delay_1s_updata_db(10);		
+			g_user_list[1]=buf[3];
+			if(g_user_registing==1)
+			{
+				delay_1s_send_resgist_ok(10);
+			}
+			else
+			{
+				delay_1s_updata_db(10);	
+			}					
 		}
 		else if(buf[2]==0x32 && buf[6]==0)
-		{
-			delay_1s_send_resgist_ok(10);
+		{			
+			
 		}
 		else if(buf[6]==0xE6)
 		{
@@ -377,10 +417,12 @@ void set_ble_state(uint8_t s)
 				g_user_select[1]==buf[3] &&
 				g_user_select[2]==buf[4])
 			{
+				UART_PRINTF("CONSENT CODE OK!");
 				delay_1s_get_user_info(10);				
 			}
 			else
 			{
+				UART_PRINTF("CONSENT CODE ERROR!");
 				uint8_t buff_2a9f[4];
 				buff_2a9f[0]=0x20;
 				buff_2a9f[1]=0x02;
@@ -390,7 +432,7 @@ void set_ble_state(uint8_t s)
 		}
 		else if(buf[2]==0x30 && buf[6]==0)
 		{
-			// 
+			delay_1s_send_time(10);
 		}
 		else if(buf[6]==0xE2)
 		{
@@ -472,9 +514,10 @@ void set_fee0_fee1_0x2a99_ntf(uint8_t* buf)
 	
  	app_fee1_send_lvl(buf,FEE0_FEE1_DATA_LEN);
  	memcpy(fee0s_env->fee1_value,buf,FEE0_FEE1_DATA_LEN);
- 	UART_PRINTF("set_fee0_fee1_0x2a99_ntf\r\n");
+ 	UART_PRINTF("set_fee0_fee1_0x2a99_ntf Database Change Increment\r\n");
 
 }
+//Database Change Increment
 void set_fee0_fee1_0x2a99_rd(uint8_t* buf)
 {
 	extern void app_fee1_send_lvl(uint8_t* buf, uint8_t len);
@@ -495,8 +538,7 @@ void fee0_fee1_0x2a99_cb(uint8_t* buf)
 
 	g_user_list[16]=buf[0];
 	g_user_list[17]=buf[1];
-	update_user_info();
-	g_user_registing=0;
+	delay_1s_update_user_info(10);
 }
 void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
 {
@@ -513,6 +555,7 @@ void fee0_fee2_0x2a85_cb(uint8_t* buf)
 	g_user_list[8]=buf[3];
 	
 }
+//User Control Point
 void set_fee0_fee3_0x2a9f_ntf(uint8_t* buf,uint8_t len)
 {
 	extern void app_fee3_send_lvl(uint8_t* buf, uint8_t len);
@@ -520,7 +563,7 @@ void set_fee0_fee3_0x2a9f_ntf(uint8_t* buf,uint8_t len)
 	
  	app_fee3_send_lvl(buf,len);
  	memcpy(fee0s_env->fee3_value,buf,len);
- 	UART_PRINTF("set_fee0_fee3_0x2a9f_ntf\r\n");
+ 	UART_PRINTF("set_fee0_fee3_0x2a9f_ntf User Control Point\r\n");
 }
 void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 {
@@ -538,7 +581,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		buff[5]=0xA5;
 		buff[6]=0x03;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-		xs_uart2_send_data(buff,8);
+		xs_uart_send_data(buff,8);
 
 	}
 	else if(buf[0]==0x02)
@@ -553,6 +596,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 			g_user_list[i]=0xFF;
 		}
 		set_select_user_info_to_ble_chara();
+		clear_uart_received_buf();
 		buff[0]=0xA5;
 		buff[1]=0x25;
 		buff[2]=g_user_select[0];
@@ -561,7 +605,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		buff[5]=0;
 		buff[6]=0;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-		xs_uart2_send_data(buff,8);
+		xs_uart_send_data(buff,8);
 	}
 	else if(buf[0]==0x03)
 	{
@@ -574,11 +618,12 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		buff[5]=0;
 		buff[6]=0;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-		xs_uart2_send_data(buff,8);
+		xs_uart_send_data(buff,8);
 		 
 	}
 	
 }
+//Gender
 void set_fee0_fee4_0x2a8c_rd(uint8_t* buf)
 {
 	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
@@ -633,7 +678,7 @@ void ff80_ff81_0x2a9b_cb(uint8_t* buf)
 	buff[5]=0;
 	buff[6]=0;
 	buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-	xs_uart2_send_data(buff,8);//send date
+	xs_uart_send_data(buff,8);//send date
 	
 	g_curr_time[0]=0xA5;
 	g_curr_time[1]=0x31;
@@ -643,7 +688,7 @@ void ff80_ff81_0x2a9b_cb(uint8_t* buf)
 	g_curr_time[5]=0;
 	g_curr_time[6]=0;
 	g_curr_time[7]=g_curr_time[1]+g_curr_time[2]+g_curr_time[3]+g_curr_time[4]+g_curr_time[5]+g_curr_time[6];
-	delay_1s_send_time(10);
+	
 }
 // battery
 void set_bass_batt_0x2a19_rd(uint8_t batt)
@@ -672,16 +717,33 @@ void fff0_fff1_cb(uint8_t* buf)
 		buff[5]=0;
 		buff[6]=0;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-		xs_uart2_send_data(buff,8);//send date
+		xs_uart_send_data(buff,8);//send date
 	}
 	UART_PRINTF("fff0_fff1_cb\r\n");
 
 
 }
+void set_fff0_fff2_rd(uint8_t* buf)
+{
+	struct fff0s_env_tag* fff0s_env = PRF_ENV_GET(FFF0S, fff0s);
+ 	memcpy(fff0s_env->fff2_value,buf,FFF0_FFF2_DATA_LEN);
+}
 
 void fff0_fff2_cb(uint8_t* buf)
 {
 	UART_PRINTF("fff0_fff2_cb\r\n");
+	uint8_t buff[8]={0};		
+
+	buff[0]=0xA5;
+	buff[1]=0x33;
+	buff[2]=1<<buf[1];
+	buff[3]=buf[4];
+	buff[4]=0;
+	buff[5]=0;
+	buff[6]=0;
+	buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
+	xs_uart_send_data(buff,8);//send date
+
 }
 void fff0_fff3_cb(uint8_t* buf)
 {
@@ -704,6 +766,7 @@ void fff0_fff4_cb(uint8_t* buf)
 	g_user_list[11]=buf[0];
 
 }
+//Refer Weight/BF
 void set_fff0_fff5_rd(uint8_t* buf)
 {
 	struct fff0s_env_tag* fff0s_env = PRF_ENV_GET(FFF0S, fff0s);
@@ -728,7 +791,7 @@ void get_scale_user()
 	buff[5]=0;
 	buff[6]=0;
 	buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-	xs_uart2_send_data(buff,8);//
+	xs_uart_send_data(buff,8);//
 }
 
 
@@ -793,7 +856,7 @@ void delay_1s_send_time(int t)
 		t1--;
 		if(t1==0)
 		{
-			xs_uart2_send_data(g_curr_time,8);//send time
+			xs_uart_send_data(g_curr_time,8);//send time
 		}
 	}
 }
@@ -820,7 +883,7 @@ void delay_1s_modify_user_birthday(int t)
 			buff[5]=0;
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart2_send_data(buff,8);
+			xs_uart_send_data(buff,8);
 		}
 	}
 }
@@ -846,22 +909,35 @@ void delay_1s_updata_db(int t)
 			buff[5]=0;
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart2_send_data(buff,8);
+			xs_uart_send_data(buff,8);
 		}
 	}
 }
-void update_user_info()
+void delay_1s_update_user_info(int t)
 {
-	uint8_t buff[8];
-	buff[0]=0xA5;
-	buff[1]=0x10;
-	buff[2]=(g_user_list[10]<<7)|g_user_list[1];
-	buff[3]=g_user_list[13];
-	buff[4]=g_user_list[12];
-	buff[5]=g_user_list[9];
-	buff[6]=g_user_list[11];
-	buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-	xs_uart2_send_data(buff,8);
+	static int t1=0;
+	if(t>0)
+	{
+		t1=t;
+	}
+	if(t1>0)
+	{
+		t1--;
+		if(t1==0)
+		{
+			uint8_t buff[8];
+			buff[0]=0xA5;
+			buff[1]=0x10;
+			buff[2]=(g_user_list[10]<<7)|g_user_list[1];
+			buff[3]=g_user_list[13];
+			buff[4]=g_user_list[12];
+			buff[5]=g_user_list[9];
+			buff[6]=g_user_list[11];
+			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
+			xs_uart_send_data(buff,8);
+		}
+	}
+	
 }
 void update_weight_body_measurement(uint8_t *buf)
 {
@@ -917,7 +993,7 @@ void ji_huo_scale_and_send()
 	if(g_last_msg_set==1 && g_scale_state==1 )
 	{
 		UART_PRINTF("g_last_msg_set==1 && g_scale_state==1\n");
-		uart2_write(g_last_msg,8,NULL,NULL);
+		xs_uart_send_data(g_last_msg,8);//
 		g_last_msg_set=0;
 	}
 }
@@ -935,6 +1011,7 @@ void delay_1s_send_resgist_ok(int t)
 		if(t1==0)
 		{
 			uint8_t buff_2a9f[4];
+			g_user_registing=0;
 			buff_2a9f[0]=0x20;
 			buff_2a9f[1]=0x01;
 			buff_2a9f[2]=0x01;
@@ -966,7 +1043,7 @@ void delay_1s_send_take_measure(int t)
 			buff[5]=0;
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart2_send_data(buff,8);//
+			xs_uart_send_data(buff,8);//
 		}
 	}
 }
@@ -993,7 +1070,7 @@ void delay_1s_get_user_info(int t)
 			buff[5]=0;
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart2_send_data(buff,8);
+			xs_uart_send_data(buff,8);
 		}
 	}
 }

@@ -204,7 +204,7 @@ void user_timer_cb(unsigned char ucChannel)
 
 void user_timer_init(void)
 {
-	icu_set_sleep_mode(0);
+	icu_set_sleep_mode(1);
 	rwip_prevent_sleep_set(BK_DRIVER_TIMER_ACTIVE);
 	PWM_DRV_DESC timer_desc;
 
@@ -264,9 +264,9 @@ void rw_main(void)
 	intc_init();
 	// Initialize UART component
 #if (UART_DRIVER)
-	uart_init(115200);
+	uart_init(9600);
 	uart_cb_register(uart_rx_handler);
-	uart2_init(9600);
+	uart2_init(115200);
 	uart2_cb_register(uart2_rx_handler);
 #endif
 
