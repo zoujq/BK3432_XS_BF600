@@ -115,7 +115,7 @@ void update_select_user_to_scale(uint8_t user_id);
 void regist_user_check(uint8_t pinL,uint8_t pinH);
 void delay_1s_send_time(int t);
 void delay_1s_send_user_birthday(int t);
-void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf);
+void set_ff80_ff81_0x2a2b_ntf(uint8_t* buf);
 void delay_1s_modify_user_birthday(int t);
 void update_weight_body_measurement(uint8_t *buf);
 void ji_huo_scale_and_send();
@@ -126,13 +126,15 @@ void delay_1s_get_user_info(int t);
 void set_fff0_fff2_rd(uint8_t* buf);
 uint8_t ignore_repetition(uint8_t *b);
 void delay_1s_update_user_info(int t);
+void delay_1s_regist_user_birthday(int t);
+void init_select_user_info();
 
 
 uint8_t g_user_num=0;
 //[0]=flag [1]=user id [2,3,4]=init [5,6]=year [7]=month [8]=day [9]=height [10]=sex [11]=active
 //[12,13]=CONSENT [14,15]=weight/BF  [16,17]=DB
 uint8_t g_user_list[18]={0x00,0x01,0xFF,0xFF,0xFF,0xC7,0x07,0x0A,0x01,0xA5,0x01,0x03,0,0,0,0,0,0};
-uint8_t g_user_info[18]={0x00,0x01,0xFF,0xFF,0xFF,0xC7,0x07,0x0A,0x01,0xA5,0x01,0x03,0,0,0,0,0,0};
+uint8_t g_select_user_info[18]={0x00,0x01,0xFF,0xFF,0xFF,0xC7,0x07,0x0A,0x01,0xA5,0x01,0x03,0,0,0,0,0,0};
 uint8_t g_user_select[3]={0};
 uint8_t g_user_select_index=0xff;
 uint8_t g_curr_time[8];
@@ -147,6 +149,7 @@ uint8_t g_scale_state=1;
 uint8_t g_last_msg_set=0;
 uint8_t g_rigist_user_id=0;
 uint8_t g_user_registing=0;
+uint8_t g_start_update_user_info_flag=0;
 //ble state
 #define BLE_STATE_PIN 0x07
 
@@ -172,6 +175,7 @@ void xs_user_task()
 	delay_1s_updata_db(0);
 	delay_1s_get_user_info(0);
 	delay_1s_update_user_info(0);
+	delay_1s_regist_user_birthday(0);
 
 }
 void init_ble_state()
@@ -190,6 +194,7 @@ void set_ble_state(uint8_t s)
 
 	g_ble_state=s;
 	g_user_registing=0;
+	init_select_user_info();
 
 	if(s==0)
 	{
@@ -317,6 +322,20 @@ void set_ble_state(uint8_t s)
  			set_fff0_fff2_rd(fff2_buf);
  			
 		}
+		else if(buf[6]==0xE2)
+		{
+			g_current_time_from_ble[0]=buf[2];
+			g_current_time_from_ble[1]=0x07;
+			g_current_time_from_ble[2]=buf[3];
+			g_current_time_from_ble[3]=buf[4];
+		}
+		else if(buf[6]==0xE3)
+		{
+			g_current_time_from_ble[4]=buf[2];
+			g_current_time_from_ble[5]=buf[3];
+			g_current_time_from_ble[6]=buf[4];
+			set_ff80_ff81_0x2a2b_ntf(g_current_time_from_ble);
+		}
 		else if(buf[6]==0xBD)
 		{
 			g_scale_state=0;
@@ -329,9 +348,6 @@ void set_ble_state(uint8_t s)
 			g_user_list[5]=buf[3];
 			g_user_list[7]=buf[4];
 			g_user_list[8]=buf[5];
-			
-			g_user_info[10]=(buf[2]==1?0:1);
-
 		}
 		else if(buf[6]==0xE1)
 		{
@@ -351,7 +367,11 @@ void set_ble_state(uint8_t s)
 			uint8_t buff_2a9f[4];
 			g_user_list[0]=0;
 			g_user_list[1]=buf[2];
-			set_select_user_info_to_ble_chara();
+			if(	g_user_list[1]==g_user_select[0])
+			{
+				set_select_user_info_to_ble_chara();	
+			}
+			
 			if(g_get_user_list==1)
 			{
 				app_fff1_send_lvl(g_user_list,FFF0_FFF1_DATA_LEN);
@@ -383,7 +403,7 @@ void set_ble_state(uint8_t s)
 			{
 				if(g_user_select[0]==g_user_list[1])
 				{
-					g_user_list[14]=buf[4];
+					g_user_list[14]=buf[4]*2;
 					g_user_list[15]=buf[5];
 					set_select_user_info_to_ble_chara();
 				}
@@ -391,11 +411,37 @@ void set_ble_state(uint8_t s)
 			
 					
 		}
-		else if(buf[2]==0x10 && buf[6]==0 )
+		else if(buf[6]==0xE6)
 		{
-			delay_1s_modify_user_birthday(10);
+			if(g_user_select[0]==buf[2] &&
+				g_user_select[1]==buf[3] &&
+				g_user_select[2]==buf[4])
+			{
+				UART_PRINTF("CONSENT CODE OK!");
+				delay_1s_get_user_info(10);	
+			}
+			else
+			{
+				UART_PRINTF("CONSENT CODE ERROR!");
+				uint8_t buff_2a9f[4];
+				buff_2a9f[0]=0x20;
+				buff_2a9f[1]=0x02;
+				buff_2a9f[2]=0x05;			
+				set_fee0_fee3_0x2a9f_ntf(buff_2a9f,3);
+			}
 		}
-		else if(buf[2]==0x11 && buf[6]==0)
+		else if(buf[2]==0x10)
+		{
+			if(g_user_registing==1)
+			{
+				delay_1s_regist_user_birthday(10);
+			}
+			else
+			{
+				delay_1s_modify_user_birthday(10);
+			}			
+		}
+		else if(buf[2]==0x11)
 		{
 			g_user_list[1]=buf[3];
 			if(g_user_registing==1)
@@ -411,43 +457,12 @@ void set_ble_state(uint8_t s)
 		{			
 			
 		}
-		else if(buf[6]==0xE6)
-		{
-			if(g_user_select[0]==buf[2] &&
-				g_user_select[1]==buf[3] &&
-				g_user_select[2]==buf[4])
-			{
-				UART_PRINTF("CONSENT CODE OK!");
-				delay_1s_get_user_info(10);				
-			}
-			else
-			{
-				UART_PRINTF("CONSENT CODE ERROR!");
-				uint8_t buff_2a9f[4];
-				buff_2a9f[0]=0x20;
-				buff_2a9f[1]=0x02;
-				buff_2a9f[2]=0x05;			
-				set_fee0_fee3_0x2a9f_ntf(buff_2a9f,3);
-			}
-		}
+		
 		else if(buf[2]==0x30 && buf[6]==0)
 		{
 			delay_1s_send_time(10);
 		}
-		else if(buf[6]==0xE2)
-		{
-			g_current_time_from_ble[0]=buf[2];
-			g_current_time_from_ble[1]=0x07;
-			g_current_time_from_ble[2]=buf[3];
-			g_current_time_from_ble[3]=buf[4];
-		}
-		else if(buf[6]==0xE3)
-		{
-			g_current_time_from_ble[4]=buf[2];
-			g_current_time_from_ble[5]=buf[3];
-			g_current_time_from_ble[6]=buf[4];
-			set_ff80_ff81_0x2a9b_ntf(g_current_time_from_ble);
-		}
+		
 		g_measure_data_len=0;
 
 	}
@@ -538,7 +553,7 @@ void fee0_fee1_0x2a99_cb(uint8_t* buf)
 
 	g_user_list[16]=buf[0];
 	g_user_list[17]=buf[1];
-	delay_1s_update_user_info(10);
+	delay_1s_update_user_info(30);
 }
 void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
 {
@@ -591,11 +606,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		g_user_select[1]=buf[2];
 		g_user_select[2]=buf[3];
 
-		for(int i=0;i<18;i++)
-		{
-			g_user_list[i]=0xFF;
-		}
-		set_select_user_info_to_ble_chara();
+		init_select_user_info();
 		clear_uart_received_buf();
 		buff[0]=0xA5;
 		buff[1]=0x25;
@@ -654,7 +665,7 @@ void set_fee0_fee6_0x2a9a_rd(uint8_t* buf)
 }
 
 //Current Time 
-void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf)
+void set_ff80_ff81_0x2a2b_ntf(uint8_t* buf)
 {
 	extern void app_ff81_send_lvl(uint8_t* buf, uint8_t len);
 	struct ff80s_env_tag* ff80s_env = PRF_ENV_GET(FF80S, ff80s);
@@ -665,7 +676,7 @@ void set_ff80_ff81_0x2a9b_ntf(uint8_t* buf)
 void ff80_ff81_0x2a9b_cb(uint8_t* buf)
 {
 	UART_PRINTF("ff80_ff81_0x2a9b_cb\r\n");
-	// set_ff80_ff81_0x2a9b_ntf(buf);
+	// set_ff80_ff81_0x2a2b_ntf(buf);
 	// set_bass_batt_0x2a19_rd(80);
 	
 	uint8_t buff[8]={0};		
@@ -794,7 +805,14 @@ void get_scale_user()
 	xs_uart_send_data(buff,8);//
 }
 
-
+void init_select_user_info()
+{
+	for(int i=0;i<18;i++)
+	{
+		g_user_list[i]=0xFF;
+	}
+	set_select_user_info_to_ble_chara();
+}
 void set_select_user_info_to_ble_chara()
 {
 	
@@ -857,6 +875,32 @@ void delay_1s_send_time(int t)
 		if(t1==0)
 		{
 			xs_uart_send_data(g_curr_time,8);//send time
+		}
+	}
+}
+void delay_1s_regist_user_birthday(int t)
+{
+	static int t1=0;
+	if(t>0)
+	{
+		t1=t;
+	}
+	if(t1>0)
+	{
+		t1--;
+		if(t1==0)
+		{
+			//A5 11 C7 0A 01 00 00 E3
+			uint8_t buff[8];
+			buff[0]=0xA5;
+			buff[1]=0x11;
+			buff[2]=0xC7;
+			buff[3]=0x0A;
+			buff[4]=0x01;
+			buff[5]=0;
+			buff[6]=0;
+			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
+			xs_uart_send_data(buff,8);
 		}
 	}
 }
@@ -928,7 +972,7 @@ void delay_1s_update_user_info(int t)
 			uint8_t buff[8];
 			buff[0]=0xA5;
 			buff[1]=0x10;
-			buff[2]=(g_user_list[10]<<7)|g_user_list[1];
+			buff[2]=((g_user_list[10]==1?0:1)<<7)|g_user_list[1];
 			buff[3]=g_user_list[13];
 			buff[4]=g_user_list[12];
 			buff[5]=g_user_list[9];
@@ -939,6 +983,7 @@ void delay_1s_update_user_info(int t)
 	}
 	
 }
+
 void update_weight_body_measurement(uint8_t *buf)
 {
 	uint8_t weight_m[15]={0};

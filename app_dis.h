@@ -52,7 +52,7 @@
 #define APP_DIS_SERIAL_NB_STR_LEN       (10)
 
 /// Firmware Revision
-#define APP_DIS_FIRM_REV_STR            ("6.1.2")
+#define APP_DIS_FIRM_REV_STR            ("6.1.1")
 #define APP_DIS_FIRM_REV_STR_LEN        (5)
 
 /// System ID Value - LSB -> MSB
@@ -64,7 +64,7 @@
 #define APP_DIS_HARD_REV_STR_LEN       (5)
 
 /// Software Revision String
-#define APP_DIS_SW_REV_STR              ("6.3.0")
+#define APP_DIS_SW_REV_STR              ("1.0.2")
 #define APP_DIS_SW_REV_STR_LEN          (5)
 
 /// IEEE
