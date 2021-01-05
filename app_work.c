@@ -128,6 +128,7 @@ uint8_t ignore_repetition(uint8_t *b);
 void delay_1s_update_user_info(int t);
 void delay_1s_regist_user_birthday(int t);
 void init_select_user_info();
+void delay_1s_to_loop_regist(int t);
 
 
 uint8_t g_user_num=0;
@@ -150,6 +151,10 @@ uint8_t g_last_msg_set=0;
 uint8_t g_rigist_user_id=0;
 uint8_t g_user_registing=0;
 uint8_t g_start_update_user_info_flag=0;
+
+uint8_t g_take_measure_rf_ok=0;
+uint8_t g_user_regist_rf_ok=0;
+uint8_t g_regist_10_buff[8]={0};
 //ble state
 #define BLE_STATE_PIN 0x07
 
@@ -176,6 +181,7 @@ void xs_user_task()
 	delay_1s_get_user_info(0);
 	delay_1s_update_user_info(0);
 	delay_1s_regist_user_birthday(0);
+	delay_1s_to_loop_regist(0);
 
 }
 void init_ble_state()
@@ -423,6 +429,7 @@ void set_ble_state(uint8_t s)
 			else
 			{
 				UART_PRINTF("CONSENT CODE ERROR!");
+				init_select_user_info();
 				uint8_t buff_2a9f[4];
 				buff_2a9f[0]=0x20;
 				buff_2a9f[1]=0x02;
@@ -432,6 +439,10 @@ void set_ble_state(uint8_t s)
 		}
 		else if(buf[2]==0x10)
 		{
+			if(g_user_regist_rf_ok==1)
+			{
+				g_user_regist_rf_ok=0;
+			}
 			if(g_user_registing==1)
 			{
 				delay_1s_regist_user_birthday(10);
@@ -456,11 +467,14 @@ void set_ble_state(uint8_t s)
 		else if(buf[2]==0x32 && buf[6]==0)
 		{			
 			
-		}
-		
+		}		
 		else if(buf[2]==0x30 && buf[6]==0)
 		{
 			delay_1s_send_time(10);
+		}
+		else if(buf[2]==0x60)
+		{
+			g_take_measure_rf_ok=0;
 		}
 		
 		g_measure_data_len=0;
@@ -588,6 +602,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 	if(buf[0]==0x01)
 	{
 		g_user_registing=1;
+		g_user_regist_rf_ok=1;
 		buff[0]=0xA5;
 		buff[1]=0x10;
 		buff[2]=0;
@@ -597,16 +612,19 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		buff[6]=0x03;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
 		xs_uart_send_data(buff,8);
+		memcpy(g_regist_10_buff,buff,8);
+		delay_1s_to_loop_regist(20);
+		init_select_user_info();
 
 	}
 	else if(buf[0]==0x02)
 	{
 		//A5 25 02 00 00 00 00 27
+		init_select_user_info();
 		g_user_select[0]=buf[1];
 		g_user_select[1]=buf[2];
 		g_user_select[2]=buf[3];
-
-		init_select_user_info();
+		
 		clear_uart_received_buf();
 		buff[0]=0xA5;
 		buff[1]=0x25;
@@ -630,6 +648,7 @@ void fee0_fee3_0x2a9f_cb(uint8_t* buf)
 		buff[6]=0;
 		buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
 		xs_uart_send_data(buff,8);
+		init_select_user_info();
 		 
 	}
 	
@@ -762,7 +781,8 @@ void fff0_fff3_cb(uint8_t* buf)
 
 	if(buf[0]==0)
 	{
-		delay_1s_send_take_measure(10);
+		g_take_measure_rf_ok=1;
+		delay_1s_send_take_measure(1);
 	}
 }
 void set_fff0_fff4_rd(uint8_t* buf)
@@ -807,6 +827,9 @@ void get_scale_user()
 
 void init_select_user_info()
 {
+	g_user_select[0]=0;
+	g_user_select[1]=0;
+	g_user_select[2]=0;
 	for(int i=0;i<18;i++)
 	{
 		g_user_list[i]=0xFF;
@@ -878,6 +901,32 @@ void delay_1s_send_time(int t)
 		}
 	}
 }
+void delay_1s_to_loop_regist(int t)
+{
+	static int t1=0,times=0;
+	if(t>0)
+	{
+		t1=t;
+		times=0;
+	}
+	if(t1>0)
+	{
+		t1--;
+		if(t1==0)
+		{
+			if(g_user_regist_rf_ok==1 && times++<5)
+			{
+				xs_uart_send_data(g_regist_10_buff,8);
+				t1=20;
+			}
+			else{
+				times=0;
+			}
+			
+		}
+	}
+}
+
 void delay_1s_regist_user_birthday(int t)
 {
 	static int t1=0;
@@ -1068,10 +1117,11 @@ void delay_1s_send_resgist_ok(int t)
 
 void delay_1s_send_take_measure(int t)
 {
-	static int t1=0;
+	static int t1=0,times=0;
 	if(t>0)
 	{
 		t1=t;
+		times=0;
 	}
 	if(t1>0)
 	{
@@ -1079,16 +1129,25 @@ void delay_1s_send_take_measure(int t)
 		if(t1==0)
 		{
 			//A5 60 03 00 00 00 00 60
-			uint8_t buff[8];
-			buff[0]=0xA5;
-			buff[1]=0x60;
-			buff[2]=g_user_select[0];
-			buff[3]=0;
-			buff[4]=0;
-			buff[5]=0;
-			buff[6]=0;
-			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart_send_data(buff,8);//
+			if(g_take_measure_rf_ok==1 && times++<5)
+			{
+				uint8_t buff[8];
+				buff[0]=0xA5;
+				buff[1]=0x60;
+				buff[2]=g_user_select[0];
+				buff[3]=0;
+				buff[4]=0;
+				buff[5]=0;
+				buff[6]=0;
+				buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
+				xs_uart_send_data(buff,8);//
+				t1=20;
+			}
+			else
+			{
+				times=0;
+			}
+		
 		}
 	}
 }
