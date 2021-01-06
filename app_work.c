@@ -542,7 +542,7 @@ void set_fee0_fee1_0x2a99_ntf(uint8_t* buf)
 	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
 	
  	app_fee1_send_lvl(buf,FEE0_FEE1_DATA_LEN);
- 	memcpy(fee0s_env->fee1_value,buf,FEE0_FEE1_DATA_LEN);
+ 	memcpy(fee0s_env->fee1_value,buf,4);
  	UART_PRINTF("set_fee0_fee1_0x2a99_ntf Database Change Increment\r\n");
 
 }
@@ -552,7 +552,7 @@ void set_fee0_fee1_0x2a99_rd(uint8_t* buf)
 	extern void app_fee1_send_lvl(uint8_t* buf, uint8_t len);
 	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
 
- 	memcpy(fee0s_env->fee1_value,buf,FEE0_FEE1_DATA_LEN);
+ 	memcpy(fee0s_env->fee1_value,buf,4);
  	UART_PRINTF("set_fee0_fee1_0x2a99_rd\r\n");
 	
  	for(uint8_t i=0; i<4; i++)
@@ -572,7 +572,7 @@ void fee0_fee1_0x2a99_cb(uint8_t* buf)
 void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
 {
 	struct fee0s_env_tag* fee0s_env = PRF_ENV_GET(FEE0S, fee0s);
- 	memcpy(fee0s_env->fee2_value,buf,FEE0_FEE2_DATA_LEN);
+ 	memcpy(fee0s_env->fee2_value,buf,4);
 }
 void fee0_fee2_0x2a85_cb(uint8_t* buf)
 {
@@ -1003,9 +1003,19 @@ void delay_1s_updata_db(int t)
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
 			xs_uart_send_data(buff,8);
+
+			{
+				for(int i=0;i<18;i++)
+				{
+					g_user_list[i]=0xFF;
+				}
+				set_select_user_info_to_ble_chara();
+				delay_1s_get_user_info(10);
+			}
 		}
 	}
 }
+
 void delay_1s_update_user_info(int t)
 {
 	static int t1=0;

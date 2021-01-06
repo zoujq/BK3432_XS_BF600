@@ -29,8 +29,8 @@
 #define FEE0S_IDX_MAX     0x01
 ///Maximal number of FFF0 that can be added in the DB
 
-#define  FEE0_FEE1_DATA_LEN  4
-#define  FEE0_FEE2_DATA_LEN  4
+#define  FEE0_FEE1_DATA_LEN  4  //4
+#define  FEE0_FEE2_DATA_LEN  4   //4
 #define  FEE0_FEE3_DATA_LEN  19
 
 #define  FEE0_FEE4_DATA_LEN  1

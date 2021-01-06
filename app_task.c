@@ -794,8 +794,9 @@ static int app_xs_user(ke_msg_id_t const msgid,
         ke_task_id_t const src_id)
 {
     extern void xs_user_task();
-    xs_user_task();
     ke_timer_set(APP_XS_USER, TASK_APP, 10);
+    xs_user_task();
+   
 
     return KE_MSG_CONSUMED;
 }

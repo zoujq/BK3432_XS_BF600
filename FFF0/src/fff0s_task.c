@@ -309,7 +309,7 @@ static int gattc_read_req_ind_handler(ke_msg_id_t const msgid, struct gattc_read
     uint8_t conidx = KE_IDX_GET(src_id);
     // retrieve handle information
     uint8_t status = fff0s_get_att_idx(param->handle, &att_idx);
-    uint16_t length = 0;
+    uint16_t length = 15;
     struct fff0s_env_tag* fff0s_env = PRF_ENV_GET(FFF0S, fff0s);
 
     //Send write response
