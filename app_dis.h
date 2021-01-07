@@ -45,7 +45,7 @@
 
 /// Model Number String Value
 #define APP_DIS_MODEL_NB_STR            ("BF600")
-#define APP_DIS_MODEL_NB_STR_LEN        (10)
+#define APP_DIS_MODEL_NB_STR_LEN        (5)
 
 /// Serial Number
 #define APP_DIS_SERIAL_NB_STR           ("1.0.0.0-LE")
