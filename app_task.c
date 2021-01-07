@@ -148,12 +148,12 @@ static int gapm_cmp_evt_handler(ke_msg_id_t const msgid,
                                 ke_task_id_t const src_id)
 {
 	UART_PRINTF("param->operation = 0x%x, param->status = 0x%x \r\n", param->operation, param->status);
-	switch(param->operation)
+	switch (param->operation)
 	{
-		// Reset completed
+	// Reset completed
 	case (GAPM_RESET):
 	{
-		if(param->status == GAP_ERR_NO_ERROR)
+		if (param->status == GAP_ERR_NO_ERROR)
 		{
 			// Set Device configuration
 			struct gapm_set_dev_config_cmd* cmd = KE_MSG_ALLOC(GAPM_SET_DEV_CONFIG_CMD,
@@ -243,57 +243,57 @@ static int gapc_get_dev_info_req_ind_handler(ke_msg_id_t const msgid,
         ke_task_id_t const dest_id,
         ke_task_id_t const src_id)
 {
-	switch(param->req)
+	switch (param->req)
 	{
-        case GAPC_DEV_NAME:
-        {
-            struct gapc_get_dev_info_cfm * cfm = KE_MSG_ALLOC_DYN(GAPC_GET_DEV_INFO_CFM,
-                                                    src_id, dest_id,
-                                                    gapc_get_dev_info_cfm, APP_DEVICE_NAME_MAX_LEN);
-            cfm->req = param->req;
-            cfm->info.name.length = appm_get_dev_name(cfm->info.name.value);
+	case GAPC_DEV_NAME:
+	{
+		struct gapc_get_dev_info_cfm * cfm = KE_MSG_ALLOC_DYN(GAPC_GET_DEV_INFO_CFM,
+		                                     src_id, dest_id,
+		                                     gapc_get_dev_info_cfm, APP_DEVICE_NAME_MAX_LEN);
+		cfm->req = param->req;
+		cfm->info.name.length = appm_get_dev_name(cfm->info.name.value);
 
-            // Send message
-            ke_msg_send(cfm);
-        } break;
+		// Send message
+		ke_msg_send(cfm);
+	} break;
 
-        case GAPC_DEV_APPEARANCE:
-        {
-            // Allocate message
-            struct gapc_get_dev_info_cfm *cfm = KE_MSG_ALLOC(GAPC_GET_DEV_INFO_CFM,
-                                                    src_id, dest_id,
-                                                    gapc_get_dev_info_cfm);
-            cfm->req = param->req;
-            
-            // No appearance
-            cfm->info.appearance = 0;
+	case GAPC_DEV_APPEARANCE:
+	{
+		// Allocate message
+		struct gapc_get_dev_info_cfm *cfm = KE_MSG_ALLOC(GAPC_GET_DEV_INFO_CFM,
+		                                    src_id, dest_id,
+		                                    gapc_get_dev_info_cfm);
+		cfm->req = param->req;
 
-            // Send message
-            ke_msg_send(cfm);
-        } break;
+		// No appearance
+		cfm->info.appearance = 0;
 
-        case GAPC_DEV_SLV_PREF_PARAMS:
-        {
-            // Allocate message
-            struct gapc_get_dev_info_cfm *cfm = KE_MSG_ALLOC(GAPC_GET_DEV_INFO_CFM,
-                    								src_id, dest_id,
-                                                    gapc_get_dev_info_cfm);
-						cfm->req = param->req;
-						// Slave preferred Connection interval Min
-						cfm->info.slv_params.con_intv_min = BLE_UAPDATA_MIN_INTVALUE;
-						// Slave preferred Connection interval Max
-						cfm->info.slv_params.con_intv_max = BLE_UAPDATA_MAX_INTVALUE;
-						// Slave preferred Connection latency
-						cfm->info.slv_params.slave_latency = BLE_UAPDATA_LATENCY;
-						// Slave preferred Link supervision timeout
-						cfm->info.slv_params.conn_timeout  = BLE_UAPDATA_TIMEOUT;  // 6s (600*10ms)
+		// Send message
+		ke_msg_send(cfm);
+	} break;
 
-            // Send message
-            ke_msg_send(cfm);
-        } break;
+	case GAPC_DEV_SLV_PREF_PARAMS:
+	{
+		// Allocate message
+		struct gapc_get_dev_info_cfm *cfm = KE_MSG_ALLOC(GAPC_GET_DEV_INFO_CFM,
+		                                    src_id, dest_id,
+		                                    gapc_get_dev_info_cfm);
+		cfm->req = param->req;
+		// Slave preferred Connection interval Min
+		cfm->info.slv_params.con_intv_min = BLE_UAPDATA_MIN_INTVALUE;
+		// Slave preferred Connection interval Max
+		cfm->info.slv_params.con_intv_max = BLE_UAPDATA_MAX_INTVALUE;
+		// Slave preferred Connection latency
+		cfm->info.slv_params.slave_latency = BLE_UAPDATA_LATENCY;
+		// Slave preferred Link supervision timeout
+		cfm->info.slv_params.conn_timeout  = BLE_UAPDATA_TIMEOUT;  // 6s (600*10ms)
 
-        default: /* Do Nothing */
-			break;
+		// Send message
+		ke_msg_send(cfm);
+	} break;
+
+	default: /* Do Nothing */
+		break;
 	}
 
 
@@ -346,8 +346,8 @@ static int gapc_connection_req_ind_handler(ke_msg_id_t const msgid,
         ke_task_id_t const src_id)
 {
 	extern void set_ble_state(char s);
-    set_ble_state(0);
-	UART_PRINTF("%s\r\n", __func__);	
+	set_ble_state(0);
+	UART_PRINTF("%s\r\n", __func__);
 
 	app_env.conidx = KE_IDX_GET(src_id);
 	// Check if the received Connection Handle was valid
@@ -378,9 +378,9 @@ static int gapc_connection_req_ind_handler(ke_msg_id_t const msgid,
 		app_sec_env.bonded = false;
 		app_sec_env.peer_pairing = false;
 		app_sec_env.peer_encrypt = false;
-		ke_timer_set(APP_SEND_SECURITY_REQ,TASK_APP,80);
+		ke_timer_set(APP_SEND_SECURITY_REQ,TASK_APP,200);
 
-        UART_PRINTF("peer_addr_type = 0x%x\r\n",param->peer_addr_type);
+		UART_PRINTF("peer_addr_type = 0x%x\r\n",param->peer_addr_type);
 		UART_PRINTF("peer_addr = ");
 		for(uint8_t i = 0; i < sizeof(bd_addr_t); i ++)
 		{
@@ -389,9 +389,9 @@ static int gapc_connection_req_ind_handler(ke_msg_id_t const msgid,
 		UART_PRINTF("\r\n");
 
 #if UPDATE_CONNENCT_PARAM
-		ke_timer_set(APP_PARAM_UPDATE_REQ_IND,TASK_APP,100);
+		ke_timer_set(APP_PARAM_UPDATE_REQ_IND, TASK_APP, 100);
 #endif
-        ke_timer_set(APP_GATTC_EXC_MTU_CMD,TASK_APP,20);
+		ke_timer_set(APP_GATTC_EXC_MTU_CMD, TASK_APP, 20);
 
 	}
 	else
@@ -420,8 +420,8 @@ static int gapc_cmp_evt_handler(ke_msg_id_t const msgid,
                                 ke_task_id_t const dest_id,
                                 ke_task_id_t const src_id)
 {
-	UART_PRINTF("gapc_cmp_evt_handler operation = %x\r\n",param->operation);
-	switch(param->operation)
+	UART_PRINTF("gapc_cmp_evt_handler operation = %x\r\n", param->operation);
+	switch (param->operation)
 	{
 	case (GAPC_UPDATE_PARAMS):  //0x09
 	{
@@ -438,11 +438,11 @@ static int gapc_cmp_evt_handler(ke_msg_id_t const msgid,
 	break;
 	case (GAPC_DISCONNECT): //0x01
 	{
-		if(param->status == GAP_ERR_NO_ERROR)
+		if (param->status == GAP_ERR_NO_ERROR)
 		{
-			UART_PRINTF("pairing_fail = 0x%x\r\n",app_sec_env.pairing_fail);
+			UART_PRINTF("pairing_fail = 0x%x\r\n", app_sec_env.pairing_fail);
 			//bonding info lost and pairing fail
-			if(app_sec_env.pairing_fail)
+			if (app_sec_env.pairing_fail)
 			{
 				app_sec_env.pairing_fail = false;
 
@@ -520,8 +520,8 @@ static int gapc_disconnect_ind_handler(ke_msg_id_t const msgid,
                                        ke_task_id_t const src_id)
 {
 	extern void set_ble_state(char s);
-    set_ble_state(1);
-	UART_PRINTF("disconnect link reason = 0x%x\r\n",param->reason);
+	set_ble_state(1);
+	UART_PRINTF("disconnect link reason = 0x%x\r\n", param->reason);
 
 	// Go to the ready state
 	ke_state_set(TASK_APP, APPM_READY);
@@ -588,19 +588,19 @@ static int app_period_timer_handler(ke_msg_id_t const msgid,
                                     ke_task_id_t const dest_id,
                                     ke_task_id_t const src_id)
 {
-#if (RC_CALIBRATE)    
-    uint32_t timer_625us,timer_1us,timer_ms;
+#if (RC_CALIBRATE)
+	uint32_t timer_625us, timer_1us, timer_ms;
 
-    lld_evt_time_get_us(&timer_625us,&timer_1us);
-    //timer_625us这个值最大为0x07FFFFFF，超过又从0开始
-    timer_ms=((uint64_t)timer_625us*625+timer_1us)/1000;
+	lld_evt_time_get_us(&timer_625us, &timer_1us);
+	//timer_625us这个值最大为0x07FFFFFF，超过又从0开始
+	timer_ms = ((uint64_t)timer_625us * 625 + timer_1us) / 1000;
 
-    //UART_PRINTF("%d\r\n", timer_ms);        
-    user_timer_init();
+	//UART_PRINTF("%d\r\n", timer_ms);
+	user_timer_init();
 
 
-    ke_timer_set(APP_PERIOD_TIMER,TASK_APP,30000);
-#endif    
+	ke_timer_set(APP_PERIOD_TIMER, TASK_APP, 30000);
+#endif
 	return KE_MSG_CONSUMED;
 }
 
@@ -645,51 +645,51 @@ static int appm_msg_handler(ke_msg_id_t const msgid,
 		// Service Changed - Drop
 	} break;
 
- case (TASK_ID_FFF0S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_fff0_table_handler, msgid, param, src_id);
-        } break;
-				#if (BLE_FFA0_SERVER)	
-				case (TASK_ID_FFA0S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ffa0_table_handler, msgid, param, src_id);
-        } break;
-				#endif
-        case (TASK_ID_FF50S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ff50_table_handler, msgid, param, src_id);
-        } break;
+	case (TASK_ID_FFF0S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_fff0_table_handler, msgid, param, src_id);
+	} break;
+#if (BLE_FFA0_SERVER)
+	case (TASK_ID_FFA0S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_ffa0_table_handler, msgid, param, src_id);
+	} break;
+#endif
+	case (TASK_ID_FF50S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_ff50_table_handler, msgid, param, src_id);
+	} break;
 
 
-        case (TASK_ID_FF60S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ff60_table_handler, msgid, param, src_id);
-        } break;
+	case (TASK_ID_FF60S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_ff60_table_handler, msgid, param, src_id);
+	} break;
 
 
-        case (TASK_ID_FEE0S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_fee0_table_handler, msgid, param, src_id);
-        } break;
+	case (TASK_ID_FEE0S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_fee0_table_handler, msgid, param, src_id);
+	} break;
 
 
-        case (TASK_ID_FF80S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ff80_table_handler, msgid, param, src_id);
-        } break;
-				#if (BLE_FF90_SERVER)	
-        case (TASK_ID_FF90S):
-        {
-            // Call the Health Thermometer Module
-            msg_pol = appm_get_handler(&app_ff90_table_handler, msgid, param, src_id);
-        } break;
-				#endif
+	case (TASK_ID_FF80S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_ff80_table_handler, msgid, param, src_id);
+	} break;
+#if (BLE_FF90_SERVER)
+	case (TASK_ID_FF90S):
+	{
+		// Call the Health Thermometer Module
+		msg_pol = appm_get_handler(&app_ff90_table_handler, msgid, param, src_id);
+	} break;
+#endif
 
 	case (TASK_ID_DISS):
 	{
@@ -760,10 +760,10 @@ static int gapc_le_pkt_size_ind_handler (ke_msg_id_t const msgid,
         ke_task_id_t const src_id)
 {
 	UART_PRINTF("%s \r\n", __func__);
-	UART_PRINTF("1max_rx_octets = %d\r\n",param->max_rx_octets);
-	UART_PRINTF("1max_rx_time = %d\r\n",param->max_rx_time);
-	UART_PRINTF("1max_tx_octets = %d\r\n",param->max_tx_octets);
-	UART_PRINTF("1max_tx_time = %d\r\n",param->max_tx_time);
+	UART_PRINTF("1max_rx_octets = %d\r\n", param->max_rx_octets);
+	UART_PRINTF("1max_rx_time = %d\r\n", param->max_rx_time);
+	UART_PRINTF("1max_tx_octets = %d\r\n", param->max_tx_octets);
+	UART_PRINTF("1max_tx_time = %d\r\n", param->max_tx_time);
 
 	return KE_MSG_CONSUMED;
 }
@@ -785,9 +785,9 @@ static int gapc_param_updated_ind_handler (ke_msg_id_t const msgid,
         ke_task_id_t const src_id)
 {
 	UART_PRINTF("%s \r\n", __func__);
-	UART_PRINTF("con_interval = %d\r\n",param->con_interval);
-	UART_PRINTF("con_latency = %d\r\n",param->con_latency);
-	UART_PRINTF("sup_to = %d\r\n",param->sup_to);
+	UART_PRINTF("con_interval = %d\r\n", param->con_interval);
+	UART_PRINTF("con_latency = %d\r\n", param->con_latency);
+	UART_PRINTF("sup_to = %d\r\n", param->sup_to);
 
 	return KE_MSG_CONSUMED;
 }
@@ -814,16 +814,16 @@ static int gapc_send_security_req_handler(ke_msg_id_t const msgid,
 	return KE_MSG_CONSUMED;
 }
 static int app_xs_user(ke_msg_id_t const msgid,
-        void const *param,
-        ke_task_id_t const dest_id,
-        ke_task_id_t const src_id)
+                       void const *param,
+                       ke_task_id_t const dest_id,
+                       ke_task_id_t const src_id)
 {
-    extern void xs_user_task();
-    ke_timer_set(APP_XS_USER, TASK_APP, 10);
-    xs_user_task();
-   
+	extern void xs_user_task();
+	ke_timer_set(APP_XS_USER, TASK_APP, 10);
+	xs_user_task();
 
-    return KE_MSG_CONSUMED;
+
+	return KE_MSG_CONSUMED;
 }
 
 /**
@@ -842,9 +842,9 @@ static int gattc_mtu_changed_ind_handler(ke_msg_id_t const msgid,
         ke_task_id_t const dest_id,
         ke_task_id_t const src_id)
 {
-	UART_PRINTF("%s \r\n",__func__);
-	UART_PRINTF("ind->mtu = %d,seq = %d\r\n",ind->mtu,ind->seq_num);
-	ke_timer_clear(APP_GATTC_EXC_MTU_CMD,TASK_APP);
+	UART_PRINTF("%s \r\n", __func__);
+	UART_PRINTF("ind->mtu = %d,seq = %d\r\n", ind->mtu, ind->seq_num);
+	ke_timer_clear(APP_GATTC_EXC_MTU_CMD, TASK_APP);
 	return (KE_MSG_CONSUMED);
 }
 
@@ -881,7 +881,7 @@ static int gapc_param_update_req_ind_handler(ke_msg_id_t const msgid,
 }
 
 /**
- 
+
 *******************************************************************************
 *********
  * @brief  GATTC_EXC_MTU_CMD
@@ -891,7 +891,7 @@ static int gapc_param_update_req_ind_handler(ke_msg_id_t const msgid,
  * @param[in] src_id    ID of the sending task instance.
  *
  * @return If the message was consumed or not.
- 
+
 *******************************************************************************
 *********
  */
@@ -903,7 +903,7 @@ static int gattc_mtu_exchange_req_handler(ke_msg_id_t const msgid,
 	UART_PRINTF("%s \r\n", __func__);
 	struct gattc_exc_mtu_cmd *cmd = KE_MSG_ALLOC(GATTC_EXC_MTU_CMD,
 	                                KE_BUILD_ID(TASK_GATTC, app_env.conidx),
-	                                TASK_APP,gattc_exc_mtu_cmd);
+	                                TASK_APP, gattc_exc_mtu_cmd);
 	cmd->operation = GATTC_MTU_EXCH;
 	cmd->seq_num = 0;
 	ke_msg_send(cmd);
@@ -935,8 +935,8 @@ const struct ke_msg_handler appm_default_state[] =
 	{GAPC_PARAM_UPDATE_REQ_IND, 	(ke_msg_func_t)gapc_param_update_req_ind_handler},
 	{APP_PARAM_UPDATE_REQ_IND, 		(ke_msg_func_t)gapc_update_conn_param_req_ind_handler},
 	{APP_PERIOD_TIMER,				(ke_msg_func_t)app_period_timer_handler},
-    {APP_GATTC_EXC_MTU_CMD,		    (ke_msg_func_t)gattc_mtu_exchange_req_handler},
-    {APP_XS_USER,                   (ke_msg_func_t)app_xs_user},
+	{APP_GATTC_EXC_MTU_CMD,		    (ke_msg_func_t)gattc_mtu_exchange_req_handler},
+	{APP_XS_USER,                   (ke_msg_func_t)app_xs_user},
 };
 
 /* Specifies the message handlers that are common to all states. */
