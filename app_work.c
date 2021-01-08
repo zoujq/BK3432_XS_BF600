@@ -568,6 +568,7 @@ void fee0_fee1_0x2a99_cb(uint8_t* buf)
 	g_user_list[16]=buf[0];
 	g_user_list[17]=buf[1];
 	delay_1s_update_user_info(30);
+	set_select_user_info_to_ble_chara();
 }
 void set_fee0_fee2_0x2a85_rd(uint8_t* buf)
 {
@@ -1002,16 +1003,8 @@ void delay_1s_updata_db(int t)
 			buff[5]=0;
 			buff[6]=0;
 			buff[7]=buff[1]+buff[2]+buff[3]+buff[4]+buff[5]+buff[6];
-			xs_uart_send_data(buff,8);
-
-			{
-				for(int i=0;i<18;i++)
-				{
-					g_user_list[i]=0xFF;
-				}
-				set_select_user_info_to_ble_chara();
-				delay_1s_get_user_info(10);
-			}
+			xs_uart_send_data(buff,8);			
+			delay_1s_get_user_info(20);
 		}
 	}
 }
